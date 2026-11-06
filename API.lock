@@ -1,0 +1,55 @@
+structure Inkproof.Scale.Affine : Type u → Type u
+def Inkproof.Scale.Affine.apply : {α : Type u} → [Add α] → [Mul α] → Inkproof.Scale.Affine α → α → α
+theorem Inkproof.Scale.Affine.apply_eq : ∀ {α : Type u} [inst : Add α] [inst_1 : Mul α] (t : Inkproof.Scale.Affine α) (x : α), t.apply x = t.slope * x + t.offset
+theorem Inkproof.Scale.Affine.apply_inj : ∀ {α : Type u} [inst : Lean.Grind.Field α] (t : Inkproof.Scale.Affine α), t.slope ≠ 0 → ∀ {x y : α}, t.apply x = t.apply y ↔ x = y
+theorem Inkproof.Scale.Affine.apply_inv_apply : ∀ {α : Type u} [inst : Lean.Grind.Field α] (t : Inkproof.Scale.Affine α), t.slope ≠ 0 → ∀ (y : α), t.apply (t.inv.apply y) = y
+theorem Inkproof.Scale.Affine.apply_le_apply_iff_of_neg : ∀ {α : Type u} [inst : Lean.Grind.Field α] [inst_1 : LE α] [inst_2 : LT α] [Std.LawfulOrderLT α] [inst_4 : Std.IsLinearOrder α] [Lean.Grind.OrderedRing α] (t : Inkproof.Scale.Affine α), t.slope < 0 → ∀ {x y : α}, t.apply x ≤ t.apply y ↔ y ≤ x
+theorem Inkproof.Scale.Affine.apply_le_apply_iff_of_pos : ∀ {α : Type u} [inst : Lean.Grind.Field α] [inst_1 : LE α] [inst_2 : LT α] [Std.LawfulOrderLT α] [inst_4 : Std.IsLinearOrder α] [Lean.Grind.OrderedRing α] (t : Inkproof.Scale.Affine α), 0 < t.slope → ∀ {x y : α}, t.apply x ≤ t.apply y ↔ x ≤ y
+theorem Inkproof.Scale.Affine.apply_lt_apply_iff_of_neg : ∀ {α : Type u} [inst : Lean.Grind.Field α] [inst_1 : LE α] [inst_2 : LT α] [Std.LawfulOrderLT α] [inst_4 : Std.IsLinearOrder α] [Lean.Grind.OrderedRing α] (t : Inkproof.Scale.Affine α), t.slope < 0 → ∀ {x y : α}, t.apply x < t.apply y ↔ y < x
+theorem Inkproof.Scale.Affine.apply_lt_apply_iff_of_pos : ∀ {α : Type u} [inst : Lean.Grind.Field α] [inst_1 : LE α] [inst_2 : LT α] [Std.LawfulOrderLT α] [inst_4 : Std.IsLinearOrder α] [Lean.Grind.OrderedRing α] (t : Inkproof.Scale.Affine α), 0 < t.slope → ∀ {x y : α}, t.apply x < t.apply y ↔ x < y
+def Inkproof.Scale.Affine.comp : {α : Type u} → [Add α] → [Mul α] → Inkproof.Scale.Affine α → Inkproof.Scale.Affine α → Inkproof.Scale.Affine α
+theorem Inkproof.Scale.Affine.comp_apply : ∀ {α : Type u} [inst : Lean.Grind.Field α] (g f : Inkproof.Scale.Affine α) (x : α), (g.comp f).apply x = g.apply (f.apply x)
+theorem Inkproof.Scale.Affine.comp_assoc : ∀ {α : Type u} [inst : Lean.Grind.Field α] (h g f : Inkproof.Scale.Affine α), (h.comp g).comp f = h.comp (g.comp f)
+theorem Inkproof.Scale.Affine.comp_id : ∀ {α : Type u} [inst : Lean.Grind.Field α] (t : Inkproof.Scale.Affine α), t.comp Inkproof.Scale.Affine.id = t
+theorem Inkproof.Scale.Affine.comp_inv : ∀ {α : Type u} [inst : Lean.Grind.Field α] (t : Inkproof.Scale.Affine α), t.slope ≠ 0 → t.comp t.inv = Inkproof.Scale.Affine.id
+def Inkproof.Scale.Affine.id : {α : Type u} → [OfNat α 0] → [OfNat α 1] → Inkproof.Scale.Affine α
+theorem Inkproof.Scale.Affine.id_apply : ∀ {α : Type u} [inst : Lean.Grind.Field α] (x : α), Inkproof.Scale.Affine.id.apply x = x
+theorem Inkproof.Scale.Affine.id_comp : ∀ {α : Type u} [inst : Lean.Grind.Field α] (t : Inkproof.Scale.Affine α), Inkproof.Scale.Affine.id.comp t = t
+def Inkproof.Scale.Affine.inv : {α : Type u} → [OfNat α 1] → [Div α] → [Neg α] → Inkproof.Scale.Affine α → Inkproof.Scale.Affine α
+theorem Inkproof.Scale.Affine.inv_apply_apply : ∀ {α : Type u} [inst : Lean.Grind.Field α] (t : Inkproof.Scale.Affine α), t.slope ≠ 0 → ∀ (x : α), t.inv.apply (t.apply x) = x
+theorem Inkproof.Scale.Affine.inv_comp : ∀ {α : Type u} [inst : Lean.Grind.Field α] (t : Inkproof.Scale.Affine α), t.slope ≠ 0 → t.inv.comp t = Inkproof.Scale.Affine.id
+theorem Inkproof.Scale.Affine.inv_eq : ∀ {α : Type u} [inst : Lean.Grind.Field α] (t : Inkproof.Scale.Affine α), t.inv = { slope := t.slope⁻¹, offset := -(t.offset * t.slope⁻¹) }
+theorem Inkproof.Scale.Affine.inv_inv : ∀ {α : Type u} [inst : Lean.Grind.Field α] (t : Inkproof.Scale.Affine α), t.slope ≠ 0 → t.inv.inv = t
+constructor Inkproof.Scale.Affine.mk : {α : Type u} → α → α → Inkproof.Scale.Affine α
+field Inkproof.Scale.Affine.offset : {α : Type u} → Inkproof.Scale.Affine α → α
+field Inkproof.Scale.Affine.slope : {α : Type u} → Inkproof.Scale.Affine α → α
+structure Inkproof.Scale.Linear : Type u → Type u
+field Inkproof.Scale.Linear.domainEnd : {α : Type u} → Inkproof.Scale.Linear α → α
+field Inkproof.Scale.Linear.domainStart : {α : Type u} → Inkproof.Scale.Linear α → α
+def Inkproof.Scale.Linear.inv : {α : Type u} → Inkproof.Scale.Linear α → Inkproof.Scale.Linear α
+theorem Inkproof.Scale.Linear.inv_eq : ∀ {α : Type u} (s : Inkproof.Scale.Linear α), s.inv = { domainStart := s.rangeStart, domainEnd := s.rangeEnd, rangeStart := s.domainStart, rangeEnd := s.domainEnd }
+theorem Inkproof.Scale.Linear.inv_inv : ∀ {α : Type u} (s : Inkproof.Scale.Linear α), s.inv.inv = s
+theorem Inkproof.Scale.Linear.inv_map_map : ∀ {α : Type u} [inst : Lean.Grind.Field α] (s : Inkproof.Scale.Linear α), s.domainStart ≠ s.domainEnd → s.rangeStart ≠ s.rangeEnd → ∀ (x : α), s.inv.map (s.map x) = x
+def Inkproof.Scale.Linear.map : {α : Type u} → [Add α] → [Sub α] → [Mul α] → [Div α] → Inkproof.Scale.Linear α → α → α
+theorem Inkproof.Scale.Linear.map_domainEnd : ∀ {α : Type u} [inst : Lean.Grind.Field α] (s : Inkproof.Scale.Linear α), s.domainStart ≠ s.domainEnd → s.map s.domainEnd = s.rangeEnd
+theorem Inkproof.Scale.Linear.map_domainStart : ∀ {α : Type u} [inst : Lean.Grind.Field α] (s : Inkproof.Scale.Linear α), s.map s.domainStart = s.rangeStart
+theorem Inkproof.Scale.Linear.map_eq : ∀ {α : Type u} [inst : Add α] [inst_1 : Sub α] [inst_2 : Mul α] [inst_3 : Div α] (s : Inkproof.Scale.Linear α) (x : α), s.map x = s.rangeStart + (x - s.domainStart) * (s.rangeEnd - s.rangeStart) / (s.domainEnd - s.domainStart)
+theorem Inkproof.Scale.Linear.map_inv_map : ∀ {α : Type u} [inst : Lean.Grind.Field α] (s : Inkproof.Scale.Linear α), s.domainStart ≠ s.domainEnd → s.rangeStart ≠ s.rangeEnd → ∀ (y : α), s.map (s.inv.map y) = y
+theorem Inkproof.Scale.Linear.map_le_map_iff_of_decreasing : ∀ {α : Type u} [inst : Lean.Grind.Field α] [inst_1 : LE α] [inst_2 : LT α] [Std.LawfulOrderLT α] [inst_4 : Std.IsLinearOrder α] [Lean.Grind.OrderedRing α] (s : Inkproof.Scale.Linear α), s.domainStart < s.domainEnd ∧ s.rangeEnd < s.rangeStart ∨ s.domainEnd < s.domainStart ∧ s.rangeStart < s.rangeEnd → ∀ {x y : α}, s.map x ≤ s.map y ↔ y ≤ x
+theorem Inkproof.Scale.Linear.map_le_map_iff_of_increasing : ∀ {α : Type u} [inst : Lean.Grind.Field α] [inst_1 : LE α] [inst_2 : LT α] [Std.LawfulOrderLT α] [inst_4 : Std.IsLinearOrder α] [Lean.Grind.OrderedRing α] (s : Inkproof.Scale.Linear α), s.domainStart < s.domainEnd ∧ s.rangeStart < s.rangeEnd ∨ s.domainEnd < s.domainStart ∧ s.rangeEnd < s.rangeStart → ∀ {x y : α}, s.map x ≤ s.map y ↔ x ≤ y
+theorem Inkproof.Scale.Linear.map_lt_map_iff_of_decreasing : ∀ {α : Type u} [inst : Lean.Grind.Field α] [inst_1 : LE α] [inst_2 : LT α] [Std.LawfulOrderLT α] [inst_4 : Std.IsLinearOrder α] [Lean.Grind.OrderedRing α] (s : Inkproof.Scale.Linear α), s.domainStart < s.domainEnd ∧ s.rangeEnd < s.rangeStart ∨ s.domainEnd < s.domainStart ∧ s.rangeStart < s.rangeEnd → ∀ {x y : α}, s.map x < s.map y ↔ y < x
+theorem Inkproof.Scale.Linear.map_lt_map_iff_of_increasing : ∀ {α : Type u} [inst : Lean.Grind.Field α] [inst_1 : LE α] [inst_2 : LT α] [Std.LawfulOrderLT α] [inst_4 : Std.IsLinearOrder α] [Lean.Grind.OrderedRing α] (s : Inkproof.Scale.Linear α), s.domainStart < s.domainEnd ∧ s.rangeStart < s.rangeEnd ∨ s.domainEnd < s.domainStart ∧ s.rangeEnd < s.rangeStart → ∀ {x y : α}, s.map x < s.map y ↔ x < y
+constructor Inkproof.Scale.Linear.mk : {α : Type u} → α → α → α → α → Inkproof.Scale.Linear α
+field Inkproof.Scale.Linear.rangeEnd : {α : Type u} → Inkproof.Scale.Linear α → α
+field Inkproof.Scale.Linear.rangeStart : {α : Type u} → Inkproof.Scale.Linear α → α
+def Inkproof.Scale.Linear.toAffine : {α : Type u} → [Sub α] → [Mul α] → [Div α] → Inkproof.Scale.Linear α → Inkproof.Scale.Affine α
+theorem Inkproof.Scale.Linear.toAffine_apply : ∀ {α : Type u} [inst : Lean.Grind.Field α] (s : Inkproof.Scale.Linear α) (x : α), s.toAffine.apply x = s.map x
+theorem Inkproof.Scale.Linear.toAffine_eq : ∀ {α : Type u} [inst : Sub α] [inst_1 : Mul α] [inst_2 : Div α] (s : Inkproof.Scale.Linear α), s.toAffine = have slope := (s.rangeEnd - s.rangeStart) / (s.domainEnd - s.domainStart); { slope := slope, offset := s.rangeStart - slope * s.domainStart }
+theorem Inkproof.Scale.Linear.toAffine_inv : ∀ {α : Type u} [inst : Lean.Grind.Field α] (s : Inkproof.Scale.Linear α), s.domainStart ≠ s.domainEnd → s.rangeStart ≠ s.rangeEnd → s.inv.toAffine = s.toAffine.inv
+theorem Inkproof.Scale.Linear.toAffine_slope_ne_zero : ∀ {α : Type u} [inst : Lean.Grind.Field α] (s : Inkproof.Scale.Linear α), s.domainStart ≠ s.domainEnd → s.rangeStart ≠ s.rangeEnd → s.toAffine.slope ≠ 0
+theorem Inkproof.Scale.Linear.toAffine_slope_neg : ∀ {α : Type u} [inst : Lean.Grind.Field α] [inst_1 : LE α] [inst_2 : LT α] [Std.LawfulOrderLT α] [inst_4 : Std.IsLinearOrder α] [Lean.Grind.OrderedRing α] (s : Inkproof.Scale.Linear α), s.domainStart < s.domainEnd ∧ s.rangeEnd < s.rangeStart ∨ s.domainEnd < s.domainStart ∧ s.rangeStart < s.rangeEnd → s.toAffine.slope < 0
+theorem Inkproof.Scale.Linear.toAffine_slope_pos : ∀ {α : Type u} [inst : Lean.Grind.Field α] [inst_1 : LE α] [inst_2 : LT α] [Std.LawfulOrderLT α] [inst_4 : Std.IsLinearOrder α] [Lean.Grind.OrderedRing α] (s : Inkproof.Scale.Linear α), s.domainStart < s.domainEnd ∧ s.rangeStart < s.rangeEnd ∨ s.domainEnd < s.domainStart ∧ s.rangeEnd < s.rangeStart → 0 < s.toAffine.slope
+instance Inkproof.Scale.instReprAffine : {α : Type u_1} → [Repr α] → Repr (Inkproof.Scale.Affine α)
+def Inkproof.Scale.instReprAffine.repr : {α : Type u_1} → [Repr α] → Inkproof.Scale.Affine α → Nat → Std.Format
+instance Inkproof.Scale.instReprLinear : {α : Type u_1} → [Repr α] → Repr (Inkproof.Scale.Linear α)
+def Inkproof.Scale.instReprLinear.repr : {α : Type u_1} → [Repr α] → Inkproof.Scale.Linear α → Nat → Std.Format
