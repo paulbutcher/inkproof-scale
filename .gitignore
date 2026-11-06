@@ -1,0 +1,7 @@
+.lake/
+/test/node_modules/
+/API.lock.generated
+/build.log
+
+# Deployment settings for the agents; never part of the library.
+.env

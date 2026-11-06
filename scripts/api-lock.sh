@@ -1,11 +1,7 @@
 #!/usr/bin/env bash
-# TODO: print this library's public API surface, one stable line per item:
-# every public declaration's name and type, and every published theorem
-# statement, sorted. CI compares the output with the committed API.lock, and
-# CODEOWNERS sends any change to API.lock to the human for review.
-#
-# A small Lean executable (`lake exe api-lock`) that walks the environment is
-# the natural implementation. Rename this file to api-lock.sh and make it
-# executable once it works; until then CI skips the check with a warning.
-echo "api-lock.sh is not implemented" >&2
-exit 1
+# Prints the public API of Inkproof.Scale, one line per declaration; CI compares it with API.lock.
+# The generator is Inkproof.Core's api-lock executable. Regenerate with: scripts/api-lock.sh > API.lock
+set -euo pipefail
+cd "$(dirname "$0")/.."
+lake build InkproofScale >&2
+lake exe api-lock Inkproof.Scale Inkproof.Scale.Proofs
