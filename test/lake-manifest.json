@@ -9,7 +9,7 @@
    "dir": "..",
    "copy": false,
    "configFile": "lakefile.lean"},
-  {"url": "https://github.com/tentenths/inkproof-core",
+  {"url": "https://github.com/paulbutcher/inkproof-core",
    "type": "git",
    "subDir": null,
    "scope": "",
