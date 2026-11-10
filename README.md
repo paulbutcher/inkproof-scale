@@ -7,10 +7,15 @@ Linear scales and affine transforms between data space and screen space, with or
 | Inkproof.Scale | Lean | Lasm (`@lasm/cli`) | Inkproof.Core |
 | --- | --- | --- | --- |
 | `main` | `leanprover/lean4:v4.35.0` | 0.3.5 | `v0.1.0` |
+| `v0.1.0` | `leanprover/lean4:v4.35.0` | 0.3.5 | `v0.1.0` |
 
 The library builds natively and under Lasm from the same source.
 
 ## Using it
+
+```lean
+require «inkproof-scale» from git "https://github.com/tentenths/inkproof-scale" @ "v0.1.0"
+```
 
 `import Inkproof.Scale` brings in everything a program runs. `import Inkproof.Scale.Proofs` adds the published theorems, which a browser build need not link. Each definition's docstring names the theorems about it, and each theorem's docstring states it in plain English.
 
