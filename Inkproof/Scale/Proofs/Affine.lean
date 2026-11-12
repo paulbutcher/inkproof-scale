@@ -16,9 +16,20 @@ variable {α : Type u}
 theorem apply_eq [Add α] [Mul α] (t : Affine α) (x : α) : t.apply x = t.slope * x + t.offset :=
   rfl
 
+/-- Rebasing keeps the slope and moves the offset by the slope times the origin. -/
+theorem rebase_eq [Add α] [Mul α] (t : Affine α) (origin : α) :
+    t.rebase origin = ⟨t.slope, t.slope * origin + t.offset⟩ :=
+  rfl
+
 section Field
 
 variable [Field α]
+
+/-- PROOF-5: the rebased map at a point measured from the origin gives what the original gives at
+the point itself. -/
+theorem rebase_apply (t : Affine α) (origin x : α) :
+    (t.rebase origin).apply (x - origin) = t.apply x := by
+  simp only [apply, rebase]; grind
 
 /-- The identity map takes every point to itself. -/
 theorem id_apply (x : α) : (Affine.id : Affine α).apply x = x := by

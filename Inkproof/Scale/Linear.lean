@@ -36,6 +36,12 @@ def map [Add α] [Sub α] [Mul α] [Div α] (s : Linear α) (x : α) : α :=
 def inv (s : Linear α) : Linear α :=
   ⟨s.rangeStart, s.rangeEnd, s.domainStart, s.domainEnd⟩
 
+/-- The same scale for data measured from `origin`: `map` of the rebased scale at `x - origin` is
+`map` of the original at `x`; see `map_rebase` (SCALE-3, PROOF-5). With `origin` near the view,
+`x - origin` is small however large `x` is, so little precision is lost. -/
+def rebase [Sub α] (s : Linear α) (origin : α) : Linear α :=
+  ⟨s.domainStart - origin, s.domainEnd - origin, s.rangeStart, s.rangeEnd⟩
+
 /-- `map` as an affine map, for composing with other transforms; see `toAffine_apply` and
 `toAffine_inv`. -/
 def toAffine [Sub α] [Mul α] [Div α] (s : Linear α) : Affine α :=

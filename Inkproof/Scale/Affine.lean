@@ -35,6 +35,11 @@ def comp [Add α] [Mul α] (g f : Affine α) : Affine α :=
 def inv [OfNat α 1] [Div α] [Neg α] (t : Affine α) : Affine α :=
   ⟨1 / t.slope, -t.offset / t.slope⟩
 
+/-- The map taking `x` to `t.apply (x + origin)`, so that a view origin can be subtracted from the
+data before it reaches the map; see `rebase_apply` (SCALE-3, PROOF-5). -/
+def rebase [Add α] [Mul α] (t : Affine α) (origin : α) : Affine α :=
+  ⟨t.slope, t.slope * origin + t.offset⟩
+
 end Affine
 
 end Inkproof.Scale

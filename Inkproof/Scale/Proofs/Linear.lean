@@ -37,6 +37,11 @@ theorem toAffine_eq [Sub α] [Mul α] [Div α] (s : Linear α) :
       ⟨slope, s.rangeStart - slope * s.domainStart⟩ :=
   rfl
 
+/-- Rebasing subtracts the origin from both ends of the domain and leaves the range alone. -/
+theorem rebase_eq [Sub α] (s : Linear α) (origin : α) :
+    s.rebase origin = ⟨s.domainStart - origin, s.domainEnd - origin, s.rangeStart, s.rangeEnd⟩ :=
+  rfl
+
 section Field
 
 variable [Field α]
@@ -44,6 +49,12 @@ variable [Field α]
 /-- A scale's affine map takes every point where the scale does. -/
 theorem toAffine_apply (s : Linear α) (x : α) : s.toAffine.apply x = s.map x := by
   simp only [Affine.apply, toAffine, map, Field.div_eq_mul_inv]; grind
+
+/-- PROOF-5: the rebased scale at a point measured from the origin gives what the original gives at
+the point itself. -/
+theorem map_rebase (s : Linear α) (origin x : α) :
+    (s.rebase origin).map (x - origin) = s.map x := by
+  simp only [map, rebase]; grind
 
 /-- The start of the domain maps to the start of the range. -/
 theorem map_domainStart (s : Linear α) : s.map s.domainStart = s.rangeStart := by
