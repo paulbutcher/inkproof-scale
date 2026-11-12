@@ -7,3 +7,4 @@ import Inkproof.Scale.Categorical
 import Inkproof.Scale.Elapsed
 import Inkproof.Scale.Linear
 import Inkproof.Scale.Log
+import Inkproof.Scale.Shared

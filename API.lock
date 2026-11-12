@@ -128,6 +128,15 @@ theorem Inkproof.Scale.Log.toLinear_eq : ∀ {α : Type u} (log : α → α) (s 
 def Inkproof.Scale.Log.unmap : {α : Type u} → [Add α] → [Sub α] → [Mul α] → [Div α] → (α → α) → (α → α) → Inkproof.Scale.Log α → α → α
 theorem Inkproof.Scale.Log.unmap_eq : ∀ {α : Type u} [inst : Add α] [inst_1 : Sub α] [inst_2 : Mul α] [inst_3 : Div α] (log exp : α → α) (s : Inkproof.Scale.Log α) (y : α), Inkproof.Scale.Log.unmap log exp s y = exp ((Inkproof.Scale.Log.toLinear log s).inv.map y)
 theorem Inkproof.Scale.Log.unmap_map : ∀ {α : Type u} [inst : Lean.Grind.Field α] (log exp : α → α) (s : Inkproof.Scale.Log α), log s.domainStart ≠ log s.domainEnd → s.rangeStart ≠ s.rangeEnd → ∀ {x : α}, exp (log x) = x → Inkproof.Scale.Log.unmap log exp s (Inkproof.Scale.Log.map log s x) = x
+structure Inkproof.Scale.Shared : Type u → Type u
+theorem Inkproof.Scale.Shared.map_eq_of_eq : ∀ {α : Type u} [inst : Add α] [inst_1 : Sub α] [inst_2 : Mul α] [inst_3 : Div α] {h₁ h₂ : Inkproof.Scale.Shared (Inkproof.Scale.Linear α)}, h₁ = h₂ → ∀ (x : α), (h₁.read fun x_1 => x_1.map x) = h₂.read fun x_1 => x_1.map x
+constructor Inkproof.Scale.Shared.mk : {σ : Type u} → σ → Inkproof.Scale.Shared σ
+def Inkproof.Scale.Shared.read : {σ : Type u} → {β : Type v} → Inkproof.Scale.Shared σ → (σ → β) → β
+theorem Inkproof.Scale.Shared.read_congr : ∀ {σ : Type u} {β : Type v} {h₁ h₂ : Inkproof.Scale.Shared σ}, h₁ = h₂ → ∀ (f : σ → β), h₁.read f = h₂.read f
+theorem Inkproof.Scale.Shared.read_eq : ∀ {σ : Type u} {β : Type v} (h : Inkproof.Scale.Shared σ) (f : σ → β), h.read f = f h.scale
+theorem Inkproof.Scale.Shared.read_update : ∀ {σ : Type u} {β : Type v} (h : Inkproof.Scale.Shared σ) (f : σ → σ) (g : σ → β), (h.update f).read g = g (f h.scale)
+field Inkproof.Scale.Shared.scale : {σ : Type u} → Inkproof.Scale.Shared σ → σ
+def Inkproof.Scale.Shared.update : {σ : Type u} → Inkproof.Scale.Shared σ → (σ → σ) → Inkproof.Scale.Shared σ
 instance Inkproof.Scale.instReprAffine : {α : Type u_1} → [Repr α] → Repr (Inkproof.Scale.Affine α)
 def Inkproof.Scale.instReprAffine.repr : {α : Type u_1} → [Repr α] → Inkproof.Scale.Affine α → Nat → Std.Format
 instance Inkproof.Scale.instReprCategorical : {κ : Type u_1} → {α : Type u_2} → [Repr κ] → [Repr α] → Repr (Inkproof.Scale.Categorical κ α)

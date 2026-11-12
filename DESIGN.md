@@ -28,7 +28,11 @@ Inkproof.Scale maps values between data space and screen space with scales and a
 - `Linear α` takes the domain interval `domainStart`, `domainEnd` onto the range interval `rangeStart`, `rangeEnd` (SCALE-1). Either may run downwards, as screen y usually does, so monotonicity is stated for both directions.
 - `map` computes `rangeStart + (x - domainStart) * (rangeEnd - rangeStart) / (domainEnd - domainStart)`, so `domainStart` maps to `rangeStart` exactly, in floats too. `toAffine` gives the same map as an `Affine`, for composing, and `toAffine_apply` proves they agree.
 - `inv` swaps domain and range. Where both are nondegenerate, it undoes `map` and its affine map is the inverse of the scale's (PROOF-5).
-- Rebasing (SCALE-3) composes a scale's affine map with a translation, and the test subproject shows that shape. A shared scale (SCALE-4) is one value held by several charts; scales are plain data, so nothing here prevents either.
+- Rebasing (SCALE-3) composes a scale's affine map with a translation, and the test subproject shows that shape.
+
+## Shared scales
+
+- `Shared σ` is a handle on a scale (SCALE-4). Linked charts hold the same handle and read it with `read`, so `read_congr` proves they agree, and `read_update` that after a zoom or pan they all read the updated scale.
 
 ## Elapsed durations
 
