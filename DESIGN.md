@@ -35,6 +35,11 @@ Inkproof.Scale maps values between data space and screen space with scales and a
 - `Duration α` is a length of time in seconds (SCALE-1). `Linear.ofDurations` builds an ordinary linear scale over seconds, so every Linear theorem, including monotonicity and inversion, applies unchanged and nothing is restricted.
 - A unit is a scale factor in seconds. `Duration.ofUnits` and `toUnits` convert, inverse to each other for a nonzero unit, and `unitAffine` is the same conversion as an `Affine` for composing with a scale (PROOF-5).
 
+## Log scales
+
+- `Log α` is a linear scale over logarithms (SCALE-1). The logarithm and its inverse are parameters of `map` and `unmap`, so `Float.log` and `Float.exp` run it and the theorems need only what a real logarithm provides.
+- The hypotheses are ones a consumer meets with positive data: `exp (log x) = x` for the point inverted, and for order, `log x ≤ log y ↔ x ≤ y` at positive `x` and `y`. Composition with an `Affine` is `toAffine_comp_apply` (PROOF-5).
+
 ## Floats
 
 - `Float` is not covered by the theorems: it is not a field, and floats are opaque to proofs. Float scales run the same definitions, and the tests check what rounding must still preserve: non-strict order, `domainStart` mapping exactly to `rangeStart`, and round trips to within a relative `1e-12`.

@@ -6,6 +6,7 @@ import Inkproof.Scale
 import InkproofScaleTest.Harness
 import InkproofScaleTest.LinearTests
 import InkproofScaleTest.ElapsedTests
+import InkproofScaleTest.LogTests
 
 open InkproofScaleTest
 
@@ -16,4 +17,4 @@ def platformTest (expectWasm : Bool) : TestCase :=
       s!"isEmscripten = {System.Platform.isEmscripten}, target {System.Platform.target}"
 
 def main (args : List String) : IO UInt32 :=
-  runTests (platformTest (args.contains "--expect-wasm") :: LinearTests.tests ++ ElapsedTests.tests)
+  runTests (platformTest (args.contains "--expect-wasm") :: LinearTests.tests ++ ElapsedTests.tests ++ LogTests.tests)
