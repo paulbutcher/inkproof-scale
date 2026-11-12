@@ -40,6 +40,12 @@ Inkproof.Scale maps values between data space and screen space with scales and a
 - `Log α` is a linear scale over logarithms (SCALE-1). The logarithm and its inverse are parameters of `map` and `unmap`, so `Float.log` and `Float.exp` run it and the theorems need only what a real logarithm provides.
 - The hypotheses are ones a consumer meets with positive data: `exp (log x) = x` for the point inverted, and for order, `log x ≤ log y ↔ x ≤ y` at positive `x` and `y`. Composition with an `Affine` is `toAffine_comp_apply` (PROOF-5).
 
+## Categorical scales
+
+- `Categorical κ α` divides a range into one equal band per category, in the order of the array (SCALE-1). `bandStart i` is `rangeStart + i * bandwidth`, equal to the `Affine` `toAffine` applied to the index, so composing with a transform is `Affine.comp`.
+- `map?` and `unmap?` are partial: a value that is not a category has no band, and a position that starts no band has no category. A repeated category maps through its first occurrence.
+- Where the range is nondegenerate, band starts are ordered with the index (upwards or downwards) and distinct, and `unmap?` undoes `map?` (PROOF-5). Counting needs an ordered field of characteristic zero, which the ordered-field classes give.
+
 ## Floats
 
 - `Float` is not covered by the theorems: it is not a field, and floats are opaque to proofs. Float scales run the same definitions, and the tests check what rounding must still preserve: non-strict order, `domainStart` mapping exactly to `rangeStart`, and round trips to within a relative `1e-12`.
