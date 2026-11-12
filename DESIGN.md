@@ -34,6 +34,11 @@ Inkproof.Scale maps values between data space and screen space with scales and a
 
 - `Shared σ` is a handle on a scale (SCALE-4). Linked charts hold the same handle and read it with `read`, so `read_congr` proves they agree, and `read_update` that after a zoom or pan they all read the updated scale.
 
+## Constrained domains
+
+- `Constrained α P` is a linear scale with a proof that `P domainStart domainEnd` holds, for a consumer's constraint `P` (SCALE-6). `Linear.check?` and `withDomain?` build one by testing `P`, so a zoom that breaks it is refused, never applied; the proof is erased at run time.
+- `Includes v` is the constraint "the domain contains `v`", in either direction. `Includes.widen` moves a domain outward until it does, and leaves one that already does alone.
+
 ## Elapsed durations
 
 - `Duration α` is a length of time in seconds (SCALE-1). `Linear.ofDurations` builds an ordinary linear scale over seconds, so every Linear theorem, including monotonicity and inversion, applies unchanged and nothing is restricted.

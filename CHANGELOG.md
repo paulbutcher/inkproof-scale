@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.3.0]
+
+- Log, elapsed-duration and categorical scales, with monotonicity, inversion and composition proved.
+- Shared scale handles, proved to give every holder the same reading.
+- Linear scales constrained to a checked domain property, such as including zero.
+
 ## [0.2.0]
 
 - Rebasing for linear scales and affine maps, proved equal to the unrebased map.

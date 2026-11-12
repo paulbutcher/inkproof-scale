@@ -9,6 +9,7 @@ import InkproofScaleTest.ElapsedTests
 import InkproofScaleTest.LogTests
 import InkproofScaleTest.CategoricalTests
 import InkproofScaleTest.SharedTests
+import InkproofScaleTest.ConstrainedTests
 
 open InkproofScaleTest
 
@@ -19,4 +20,4 @@ def platformTest (expectWasm : Bool) : TestCase :=
       s!"isEmscripten = {System.Platform.isEmscripten}, target {System.Platform.target}"
 
 def main (args : List String) : IO UInt32 :=
-  runTests (platformTest (args.contains "--expect-wasm") :: LinearTests.tests ++ ElapsedTests.tests ++ LogTests.tests ++ CategoricalTests.tests ++ SharedTests.tests)
+  runTests (platformTest (args.contains "--expect-wasm") :: LinearTests.tests ++ ElapsedTests.tests ++ LogTests.tests ++ CategoricalTests.tests ++ SharedTests.tests ++ ConstrainedTests.tests)

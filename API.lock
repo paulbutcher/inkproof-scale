@@ -60,6 +60,13 @@ theorem Inkproof.Scale.Categorical.toAffine_comp_apply : ∀ {κ : Type u} {α :
 def Inkproof.Scale.Categorical.unmap? : {κ : Type u} → {α : Type v} → [BEq α] → [NatCast α] → [Add α] → [Sub α] → [Mul α] → [Div α] → Inkproof.Scale.Categorical κ α → α → Option κ
 theorem Inkproof.Scale.Categorical.unmap?_eq : ∀ {κ : Type u} {α : Type v} [inst : BEq α] [inst_1 : NatCast α] [inst_2 : Add α] [inst_3 : Sub α] [inst_4 : Mul α] [inst_5 : Div α] (s : Inkproof.Scale.Categorical κ α) (y : α), s.unmap? y = (List.find? (fun i => s.bandStart i == y) (List.range s.categories.size)).bind fun x => s.categories[x]?
 theorem Inkproof.Scale.Categorical.unmap?_map? : ∀ {κ : Type u} {α : Type v} [inst : Lean.Grind.Field α] [inst_1 : LE α] [inst_2 : LT α] [Std.LawfulOrderLT α] [inst_4 : Std.IsLinearOrder α] [Lean.Grind.OrderedRing α] (s : Inkproof.Scale.Categorical κ α) [inst_6 : BEq κ] [LawfulBEq κ] [inst_8 : BEq α] [LawfulBEq α], s.rangeStart ≠ s.rangeEnd → ∀ {k : κ} {y : α}, s.map? k = Option.some y → s.unmap? y = Option.some k
+structure Inkproof.Scale.Constrained : (α : Type u) → (α → α → Prop) → Type u
+theorem Inkproof.Scale.Constrained.holds : ∀ {α : Type u} {P : α → α → Prop} (self : Inkproof.Scale.Constrained α P), P self.scale.domainStart self.scale.domainEnd
+constructor Inkproof.Scale.Constrained.mk : {α : Type u} → {P : α → α → Prop} → (scale : Inkproof.Scale.Linear α) → P scale.domainStart scale.domainEnd → Inkproof.Scale.Constrained α P
+field Inkproof.Scale.Constrained.scale : {α : Type u} → {P : α → α → Prop} → Inkproof.Scale.Constrained α P → Inkproof.Scale.Linear α
+def Inkproof.Scale.Constrained.withDomain? : {α : Type u} → {P : α → α → Prop} → [(a b : α) → Decidable (P a b)] → Inkproof.Scale.Constrained α P → α → α → Option (Inkproof.Scale.Constrained α P)
+theorem Inkproof.Scale.Constrained.withDomain?_eq_none : ∀ {α : Type u} {P : α → α → Prop} [inst : (a b : α) → Decidable (P a b)] {c : Inkproof.Scale.Constrained α P} {a b : α}, ¬P a b → c.withDomain? a b = Option.none
+theorem Inkproof.Scale.Constrained.withDomain?_eq_some : ∀ {α : Type u} {P : α → α → Prop} [inst : (a b : α) → Decidable (P a b)] {c : Inkproof.Scale.Constrained α P} {a b : α} (h : P a b), c.withDomain? a b = Option.some { scale := have __src := c.scale; { domainStart := a, domainEnd := b, rangeStart := __src.rangeStart, rangeEnd := __src.rangeEnd }, holds := h }
 structure Inkproof.Scale.Duration : Type u → Type u
 constructor Inkproof.Scale.Duration.mk : {α : Type u} → α → Inkproof.Scale.Duration α
 def Inkproof.Scale.Duration.ofUnits : {α : Type u} → [Mul α] → α → α → Inkproof.Scale.Duration α
@@ -72,8 +79,16 @@ theorem Inkproof.Scale.Duration.toUnits_ofUnits : ∀ {α : Type u} [inst : Lean
 def Inkproof.Scale.Duration.unitAffine : {α : Type u} → [OfNat α 0] → α → Inkproof.Scale.Affine α
 theorem Inkproof.Scale.Duration.unitAffine_apply : ∀ {α : Type u} [inst : Lean.Grind.Field α] (u n : α), (Inkproof.Scale.Duration.unitAffine u).apply n = (Inkproof.Scale.Duration.ofUnits u n).seconds
 theorem Inkproof.Scale.Duration.unitAffine_inv_apply : ∀ {α : Type u} [inst : Lean.Grind.Field α] {u : α}, u ≠ 0 → ∀ (d : Inkproof.Scale.Duration α), (Inkproof.Scale.Duration.unitAffine u).inv.apply d.seconds = d.toUnits u
+def Inkproof.Scale.Includes : {α : Type u} → [LE α] → α → α → α → Prop
+def Inkproof.Scale.Includes.widen : {α : Type u} → [inst : LE α] → [DecidableLE α] → α → α → α → α × α
+theorem Inkproof.Scale.Includes.widen_includes : ∀ {α : Type u} [inst : LE α] [Std.IsLinearOrder α] [inst_2 : DecidableLE α] (v a b : α), Inkproof.Scale.Includes v (Inkproof.Scale.Includes.widen v a b).fst (Inkproof.Scale.Includes.widen v a b).snd
+theorem Inkproof.Scale.Includes.widen_of_includes : ∀ {α : Type u} [inst : LE α] [Std.IsLinearOrder α] [inst_2 : DecidableLE α] {v a b : α}, Inkproof.Scale.Includes v a b → Inkproof.Scale.Includes.widen v a b = (a, b)
+theorem Inkproof.Scale.Includes.widen_outward : ∀ {α : Type u} [inst : LE α] [Std.IsLinearOrder α] [inst_2 : DecidableLE α] (v a b : α), (a ≤ b → (Inkproof.Scale.Includes.widen v a b).fst ≤ a ∧ b ≤ (Inkproof.Scale.Includes.widen v a b).snd) ∧ (¬a ≤ b → (Inkproof.Scale.Includes.widen v a b).snd ≤ b ∧ a ≤ (Inkproof.Scale.Includes.widen v a b).fst)
 structure Inkproof.Scale.Linear : Type u → Type u
 def Inkproof.Scale.Linear.NormalSteps : Inkproof.Scale.Linear Float → Float → Prop
+def Inkproof.Scale.Linear.check? : {α : Type u} → (P : α → α → Prop) → [(a b : α) → Decidable (P a b)] → Inkproof.Scale.Linear α → Option (Inkproof.Scale.Constrained α P)
+theorem Inkproof.Scale.Linear.check?_eq_none : ∀ {α : Type u} {P : α → α → Prop} [inst : (a b : α) → Decidable (P a b)] {s : Inkproof.Scale.Linear α}, ¬P s.domainStart s.domainEnd → Inkproof.Scale.Linear.check? P s = Option.none
+theorem Inkproof.Scale.Linear.check?_eq_some : ∀ {α : Type u} {P : α → α → Prop} [inst : (a b : α) → Decidable (P a b)] {s : Inkproof.Scale.Linear α} (h : P s.domainStart s.domainEnd), Inkproof.Scale.Linear.check? P s = Option.some { scale := s, holds := h }
 field Inkproof.Scale.Linear.domainEnd : {α : Type u} → Inkproof.Scale.Linear α → α
 field Inkproof.Scale.Linear.domainStart : {α : Type u} → Inkproof.Scale.Linear α → α
 def Inkproof.Scale.Linear.inv : {α : Type u} → Inkproof.Scale.Linear α → Inkproof.Scale.Linear α
@@ -137,6 +152,7 @@ theorem Inkproof.Scale.Shared.read_eq : ∀ {σ : Type u} {β : Type v} (h : Ink
 theorem Inkproof.Scale.Shared.read_update : ∀ {σ : Type u} {β : Type v} (h : Inkproof.Scale.Shared σ) (f : σ → σ) (g : σ → β), (h.update f).read g = g (f h.scale)
 field Inkproof.Scale.Shared.scale : {σ : Type u} → Inkproof.Scale.Shared σ → σ
 def Inkproof.Scale.Shared.update : {σ : Type u} → Inkproof.Scale.Shared σ → (σ → σ) → Inkproof.Scale.Shared σ
+instance Inkproof.Scale.instDecidableIncludesOfDecidableLE : {α : Type u} → [inst : LE α] → [DecidableLE α] → (v a b : α) → Decidable (Inkproof.Scale.Includes v a b)
 instance Inkproof.Scale.instReprAffine : {α : Type u_1} → [Repr α] → Repr (Inkproof.Scale.Affine α)
 def Inkproof.Scale.instReprAffine.repr : {α : Type u_1} → [Repr α] → Inkproof.Scale.Affine α → Nat → Std.Format
 instance Inkproof.Scale.instReprCategorical : {κ : Type u_1} → {α : Type u_2} → [Repr κ] → [Repr α] → Repr (Inkproof.Scale.Categorical κ α)

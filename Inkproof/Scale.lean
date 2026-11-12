@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import Inkproof.Scale.Affine
 import Inkproof.Scale.Categorical
+import Inkproof.Scale.Constrained
 import Inkproof.Scale.Elapsed
 import Inkproof.Scale.Linear
 import Inkproof.Scale.Log
