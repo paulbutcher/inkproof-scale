@@ -30,6 +30,11 @@ Inkproof.Scale maps values between data space and screen space with scales and a
 - `inv` swaps domain and range. Where both are nondegenerate, it undoes `map` and its affine map is the inverse of the scale's (PROOF-5).
 - Rebasing (SCALE-3) composes a scale's affine map with a translation, and the test subproject shows that shape. A shared scale (SCALE-4) is one value held by several charts; scales are plain data, so nothing here prevents either.
 
+## Elapsed durations
+
+- `Duration α` is a length of time in seconds (SCALE-1). `Linear.ofDurations` builds an ordinary linear scale over seconds, so every Linear theorem, including monotonicity and inversion, applies unchanged and nothing is restricted.
+- A unit is a scale factor in seconds. `Duration.ofUnits` and `toUnits` convert, inverse to each other for a nonzero unit, and `unitAffine` is the same conversion as an `Affine` for composing with a scale (PROOF-5).
+
 ## Floats
 
 - `Float` is not covered by the theorems: it is not a field, and floats are opaque to proofs. Float scales run the same definitions, and the tests check what rounding must still preserve: non-strict order, `domainStart` mapping exactly to `rangeStart`, and round trips to within a relative `1e-12`.

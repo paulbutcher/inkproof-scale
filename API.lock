@@ -27,6 +27,18 @@ theorem Inkproof.Scale.Affine.rebase_apply : ∀ {α : Type u} [inst : Lean.Grin
 theorem Inkproof.Scale.Affine.rebase_apply_float_error : ∀ (t : Inkproof.Scale.Affine Float) (o x : Float) {a w b d : Rat}, Inkproof.Core.Float.toRat t.slope = Option.some a → Inkproof.Core.Float.toRat o = Option.some w → Inkproof.Core.Float.toRat x = Option.some b → Inkproof.Core.Float.toRat t.offset = Option.some d → Inkproof.Core.NormalRange (a * w) → (∀ (po : Rat), Inkproof.Core.Float.toRat (t.slope * o) = Option.some po → Inkproof.Core.NormalRange (po + d)) → Inkproof.Core.NormalRange (b - w) → (∀ (xo : Rat), Inkproof.Core.Float.toRat (x - o) = Option.some xo → Inkproof.Core.NormalRange (a * xo)) → (∀ (pm c' : Rat), Inkproof.Core.Float.toRat (t.slope * (x - o)) = Option.some pm → Inkproof.Core.Float.toRat (t.slope * o + t.offset) = Option.some c' → Inkproof.Core.NormalRange (pm + c')) → ∃ q, Inkproof.Core.Float.toRat ((t.rebase o).apply (x - o)) = Option.some q ∧ Inkproof.Core.ratAbs (q - (a * b + d)) ≤ (Inkproof.Core.ratAbs (a * (b - w)) + Inkproof.Core.ratAbs (a * w) + Inkproof.Core.ratAbs d) / Inkproof.Core.scaleTwoPow 1 50
 theorem Inkproof.Scale.Affine.rebase_eq : ∀ {α : Type u} [inst : Add α] [inst_1 : Mul α] (t : Inkproof.Scale.Affine α) (origin : α), t.rebase origin = { slope := t.slope, offset := t.slope * origin + t.offset }
 field Inkproof.Scale.Affine.slope : {α : Type u} → Inkproof.Scale.Affine α → α
+structure Inkproof.Scale.Duration : Type u → Type u
+constructor Inkproof.Scale.Duration.mk : {α : Type u} → α → Inkproof.Scale.Duration α
+def Inkproof.Scale.Duration.ofUnits : {α : Type u} → [Mul α] → α → α → Inkproof.Scale.Duration α
+theorem Inkproof.Scale.Duration.ofUnits_seconds : ∀ {α : Type u} [inst : Mul α] (unitSeconds n : α), (Inkproof.Scale.Duration.ofUnits unitSeconds n).seconds = n * unitSeconds
+theorem Inkproof.Scale.Duration.ofUnits_toUnits : ∀ {α : Type u} [inst : Lean.Grind.Field α] (d : Inkproof.Scale.Duration α) {u : α}, u ≠ 0 → Inkproof.Scale.Duration.ofUnits u (d.toUnits u) = d
+field Inkproof.Scale.Duration.seconds : {α : Type u} → Inkproof.Scale.Duration α → α
+def Inkproof.Scale.Duration.toUnits : {α : Type u} → [Div α] → Inkproof.Scale.Duration α → α → α
+theorem Inkproof.Scale.Duration.toUnits_eq : ∀ {α : Type u} [inst : Div α] (d : Inkproof.Scale.Duration α) (unitSeconds : α), d.toUnits unitSeconds = d.seconds / unitSeconds
+theorem Inkproof.Scale.Duration.toUnits_ofUnits : ∀ {α : Type u} [inst : Lean.Grind.Field α] {u : α}, u ≠ 0 → ∀ (n : α), (Inkproof.Scale.Duration.ofUnits u n).toUnits u = n
+def Inkproof.Scale.Duration.unitAffine : {α : Type u} → [OfNat α 0] → α → Inkproof.Scale.Affine α
+theorem Inkproof.Scale.Duration.unitAffine_apply : ∀ {α : Type u} [inst : Lean.Grind.Field α] (u n : α), (Inkproof.Scale.Duration.unitAffine u).apply n = (Inkproof.Scale.Duration.ofUnits u n).seconds
+theorem Inkproof.Scale.Duration.unitAffine_inv_apply : ∀ {α : Type u} [inst : Lean.Grind.Field α] {u : α}, u ≠ 0 → ∀ (d : Inkproof.Scale.Duration α), (Inkproof.Scale.Duration.unitAffine u).inv.apply d.seconds = d.toUnits u
 structure Inkproof.Scale.Linear : Type u → Type u
 def Inkproof.Scale.Linear.NormalSteps : Inkproof.Scale.Linear Float → Float → Prop
 field Inkproof.Scale.Linear.domainEnd : {α : Type u} → Inkproof.Scale.Linear α → α
@@ -47,6 +59,8 @@ theorem Inkproof.Scale.Linear.map_lt_map_iff_of_decreasing : ∀ {α : Type u} [
 theorem Inkproof.Scale.Linear.map_lt_map_iff_of_increasing : ∀ {α : Type u} [inst : Lean.Grind.Field α] [inst_1 : LE α] [inst_2 : LT α] [Std.LawfulOrderLT α] [inst_4 : Std.IsLinearOrder α] [Lean.Grind.OrderedRing α] (s : Inkproof.Scale.Linear α), s.domainStart < s.domainEnd ∧ s.rangeStart < s.rangeEnd ∨ s.domainEnd < s.domainStart ∧ s.rangeEnd < s.rangeStart → ∀ {x y : α}, s.map x < s.map y ↔ x < y
 theorem Inkproof.Scale.Linear.map_rebase : ∀ {α : Type u} [inst : Lean.Grind.Field α] (s : Inkproof.Scale.Linear α) (origin x : α), (s.rebase origin).map (x - origin) = s.map x
 constructor Inkproof.Scale.Linear.mk : {α : Type u} → α → α → α → α → Inkproof.Scale.Linear α
+def Inkproof.Scale.Linear.ofDurations : {α : Type u} → Inkproof.Scale.Duration α → Inkproof.Scale.Duration α → α → α → Inkproof.Scale.Linear α
+theorem Inkproof.Scale.Linear.ofDurations_map : ∀ {α : Type u} [inst : Add α] [inst_1 : Sub α] [inst_2 : Mul α] [inst_3 : Div α] (start stop : Inkproof.Scale.Duration α) (rangeStart rangeEnd : α) (d : Inkproof.Scale.Duration α), (Inkproof.Scale.Linear.ofDurations start stop rangeStart rangeEnd).map d.seconds = rangeStart + (d.seconds - start.seconds) * (rangeEnd - rangeStart) / (stop.seconds - start.seconds)
 field Inkproof.Scale.Linear.rangeEnd : {α : Type u} → Inkproof.Scale.Linear α → α
 field Inkproof.Scale.Linear.rangeStart : {α : Type u} → Inkproof.Scale.Linear α → α
 def Inkproof.Scale.Linear.rebase : {α : Type u} → [Sub α] → Inkproof.Scale.Linear α → α → Inkproof.Scale.Linear α
@@ -54,6 +68,7 @@ theorem Inkproof.Scale.Linear.rebase_eq : ∀ {α : Type u} [inst : Sub α] (s :
 theorem Inkproof.Scale.Linear.rebase_map_float_error : ∀ (s : Inkproof.Scale.Linear Float) (o x : Float) {X W P Q R S : Rat}, Inkproof.Core.Float.toRat x = Option.some X → Inkproof.Core.Float.toRat o = Option.some W → Inkproof.Core.Float.toRat s.domainStart = Option.some P → Inkproof.Core.Float.toRat s.domainEnd = Option.some Q → Inkproof.Core.Float.toRat s.rangeStart = Option.some R → Inkproof.Core.Float.toRat s.rangeEnd = Option.some S → Q - P ≠ 0 → Inkproof.Core.NormalRange (X - W) → Inkproof.Core.NormalRange (P - W) → Inkproof.Core.NormalRange (Q - W) → (s.rebase o).NormalSteps (x - o) → 2 * (Inkproof.Core.ratAbs (Q - W) + Inkproof.Core.ratAbs (P - W)) ≤ Inkproof.Core.ratAbs (Q - P) * Inkproof.Core.scaleTwoPow 1 53 → ∃ q, Inkproof.Core.Float.toRat ((s.rebase o).map (x - o)) = Option.some q ∧ Inkproof.Core.ratAbs (q - (R + (X - P) * (S - R) / (Q - P))) ≤ (Inkproof.Core.ratAbs ((X - P) * (S - R) / (Q - P)) + Inkproof.Core.ratAbs R + (Inkproof.Core.ratAbs (S - R) * (Inkproof.Core.ratAbs (X - W) + Inkproof.Core.ratAbs (P - W)) + Inkproof.Core.ratAbs ((X - P) * (S - R) / (Q - P)) * (Inkproof.Core.ratAbs (Q - W) + Inkproof.Core.ratAbs (P - W))) / Inkproof.Core.ratAbs (Q - P)) / Inkproof.Core.scaleTwoPow 1 49
 def Inkproof.Scale.Linear.toAffine : {α : Type u} → [Sub α] → [Mul α] → [Div α] → Inkproof.Scale.Linear α → Inkproof.Scale.Affine α
 theorem Inkproof.Scale.Linear.toAffine_apply : ∀ {α : Type u} [inst : Lean.Grind.Field α] (s : Inkproof.Scale.Linear α) (x : α), s.toAffine.apply x = s.map x
+theorem Inkproof.Scale.Linear.toAffine_comp_unitAffine_apply : ∀ {α : Type u} [inst : Lean.Grind.Field α] (s : Inkproof.Scale.Linear α) (u n : α), (s.toAffine.comp (Inkproof.Scale.Duration.unitAffine u)).apply n = s.map (Inkproof.Scale.Duration.ofUnits u n).seconds
 theorem Inkproof.Scale.Linear.toAffine_eq : ∀ {α : Type u} [inst : Sub α] [inst_1 : Mul α] [inst_2 : Div α] (s : Inkproof.Scale.Linear α), s.toAffine = have slope := (s.rangeEnd - s.rangeStart) / (s.domainEnd - s.domainStart); { slope := slope, offset := s.rangeStart - slope * s.domainStart }
 theorem Inkproof.Scale.Linear.toAffine_inv : ∀ {α : Type u} [inst : Lean.Grind.Field α] (s : Inkproof.Scale.Linear α), s.domainStart ≠ s.domainEnd → s.rangeStart ≠ s.rangeEnd → s.inv.toAffine = s.toAffine.inv
 theorem Inkproof.Scale.Linear.toAffine_slope_ne_zero : ∀ {α : Type u} [inst : Lean.Grind.Field α] (s : Inkproof.Scale.Linear α), s.domainStart ≠ s.domainEnd → s.rangeStart ≠ s.rangeEnd → s.toAffine.slope ≠ 0
@@ -61,5 +76,7 @@ theorem Inkproof.Scale.Linear.toAffine_slope_neg : ∀ {α : Type u} [inst : Lea
 theorem Inkproof.Scale.Linear.toAffine_slope_pos : ∀ {α : Type u} [inst : Lean.Grind.Field α] [inst_1 : LE α] [inst_2 : LT α] [Std.LawfulOrderLT α] [inst_4 : Std.IsLinearOrder α] [Lean.Grind.OrderedRing α] (s : Inkproof.Scale.Linear α), s.domainStart < s.domainEnd ∧ s.rangeStart < s.rangeEnd ∨ s.domainEnd < s.domainStart ∧ s.rangeEnd < s.rangeStart → 0 < s.toAffine.slope
 instance Inkproof.Scale.instReprAffine : {α : Type u_1} → [Repr α] → Repr (Inkproof.Scale.Affine α)
 def Inkproof.Scale.instReprAffine.repr : {α : Type u_1} → [Repr α] → Inkproof.Scale.Affine α → Nat → Std.Format
+instance Inkproof.Scale.instReprDuration : {α : Type u_1} → [Repr α] → Repr (Inkproof.Scale.Duration α)
+def Inkproof.Scale.instReprDuration.repr : {α : Type u_1} → [Repr α] → Inkproof.Scale.Duration α → Nat → Std.Format
 instance Inkproof.Scale.instReprLinear : {α : Type u_1} → [Repr α] → Repr (Inkproof.Scale.Linear α)
 def Inkproof.Scale.instReprLinear.repr : {α : Type u_1} → [Repr α] → Inkproof.Scale.Linear α → Nat → Std.Format
