@@ -33,7 +33,7 @@ Inkproof.Scale maps values between data space and screen space with scales and a
 ## Floats
 
 - `Float` is not covered by the theorems: it is not a field, and floats are opaque to proofs. Float scales run the same definitions, and the tests check what rounding must still preserve: non-strict order, `domainStart` mapping exactly to `rangeStart`, and round trips to within a relative `1e-12`.
-- A proved sub-pixel error bound for floats belongs with FP-3, over real numbers.
+- `Inkproof.Scale.Proofs.FloatBound` proves the Float affine, linear and rebased maps within an explicit multiple of `2 ^ -49` of the exact result, assuming no overflow or subnormal intermediate; binary32 is not covered.
 
 ## Testing
 

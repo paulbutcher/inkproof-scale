@@ -2,7 +2,8 @@
 
 ## [0.2.0]
 
-Rebasing for linear scales and affine maps, proved equal to the unrebased map.
+- Rebasing for linear scales and affine maps, proved equal to the unrebased map.
+- Float linear and rebased maps proved within an explicit bound of the exact result, under `Inkproof.Core.float_rounding_model`.
 
 ## [0.1.1]
 
