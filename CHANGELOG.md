@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.4.1]
+
+- The documentation no longer calls floats opaque to proofs; it says Float is excluded because it is not a field.
+
 ## [0.4.0]
 
 - The natural-number cast lemmas are no longer published; use `Lean.Grind.OrderedRing` in Lean core.
