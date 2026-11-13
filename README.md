@@ -41,4 +41,4 @@ The proofs cover the Lean source. These are trusted beneath them:
 | Lean compiler and runtime | Compiles the proved source | Pinned in `lean-toolchain`; the same test program runs natively and under Lasm |
 | Lasm compiler, runtime and Emscripten | Compiles Lean to Wasm | Pinned exactly in the test subproject; the same test program runs natively and under Lasm |
 
-The library adds no axioms, and has no generated code and no hand-written JavaScript.
+The library declares no axioms of its own; its float error theorems rely on Core's `float_rounding_model` axiom (FP-3). It has no generated code and no hand-written JavaScript.

@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.4.2]
+
+- The README states that the float error theorems rely on Core's `float_rounding_model` axiom.
+
 ## [0.4.1]
 
 - The documentation no longer calls floats opaque to proofs; it says Float is excluded because it is not a field.
