@@ -3,11 +3,13 @@ Copyright (c) 2026 Paul Butcher. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import Inkproof.Scale
-import InkproofScaleTest.Harness
+import InkproofTools.Test.Harness
 
 /-! Float categorical scales: bands stay ordered, start at the range's start and invert. -/
 
 namespace InkproofScaleTest.CategoricalTests
+
+open InkproofTools.Test
 
 open Inkproof.Scale
 

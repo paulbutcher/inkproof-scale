@@ -3,12 +3,14 @@ Copyright (c) 2026 Paul Butcher. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import Inkproof.Scale
-import InkproofScaleTest.Harness
+import InkproofTools.Test.Harness
 
 /-! Float durations: a count of units mapped through the composed conversion agrees with mapping its
 seconds directly, to within rounding. -/
 
 namespace InkproofScaleTest.ElapsedTests
+
+open InkproofTools.Test
 
 open Inkproof.Scale
 

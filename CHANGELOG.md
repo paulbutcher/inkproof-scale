@@ -3,6 +3,7 @@
 ## [0.4.1]
 
 - The documentation no longer calls floats opaque to proofs; it says Float is excluded because it is not a field.
+- The tests use the shared test harness and Lasm driver from `inkproof-core` v0.5.1, and the private copies are gone.
 
 ## [0.4.0]
 

@@ -3,13 +3,15 @@ Copyright (c) 2026 Paul Butcher. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import Inkproof.Scale
-import InkproofScaleTest.Harness
+import InkproofTools.Test.Harness
 
 /-! Linear scales run natively and under Lasm. Over `Rat` the theorems already say what these check,
 so the tests guard the compilers beneath them. Over `Float` there are no theorems, since floats are
 opaque to proofs and are not a field; the properties here are what rounding must still preserve. -/
 
 namespace InkproofScaleTest.LinearTests
+
+open InkproofTools.Test
 
 open Inkproof.Scale
 

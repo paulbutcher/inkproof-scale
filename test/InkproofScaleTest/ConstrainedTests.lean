@@ -3,11 +3,13 @@ Copyright (c) 2026 Paul Butcher. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import Inkproof.Scale
-import InkproofScaleTest.Harness
+import InkproofTools.Test.Harness
 
 /-! A scale constrained to include zero stays so through every zoom that is accepted. -/
 
 namespace InkproofScaleTest.ConstrainedTests
+
+open InkproofTools.Test
 
 open Inkproof.Scale
 

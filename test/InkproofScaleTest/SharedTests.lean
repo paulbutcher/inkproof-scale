@@ -3,11 +3,13 @@ Copyright (c) 2026 Paul Butcher. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import Inkproof.Scale
-import InkproofScaleTest.Harness
+import InkproofTools.Test.Harness
 
 /-! Two charts holding one handle agree before and after an update. -/
 
 namespace InkproofScaleTest.SharedTests
+
+open InkproofTools.Test
 
 open Inkproof.Scale
 
