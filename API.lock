@@ -48,10 +48,6 @@ theorem Inkproof.Scale.Categorical.inv_pos_of_pos : ∀ {α : Type v} [inst : Le
 def Inkproof.Scale.Categorical.map? : {κ : Type u} → {α : Type v} → [BEq κ] → [NatCast α] → [Add α] → [Sub α] → [Mul α] → [Div α] → Inkproof.Scale.Categorical κ α → κ → Option α
 theorem Inkproof.Scale.Categorical.map?_eq : ∀ {κ : Type u} {α : Type v} [inst : BEq κ] [inst_1 : NatCast α] [inst_2 : Add α] [inst_3 : Sub α] [inst_4 : Mul α] [inst_5 : Div α] (s : Inkproof.Scale.Categorical κ α) (k : κ), s.map? k = Option.map s.bandStart (s.index? k)
 constructor Inkproof.Scale.Categorical.mk : {κ : Type u} → {α : Type v} → Array κ → α → α → Inkproof.Scale.Categorical κ α
-theorem Inkproof.Scale.Categorical.natCast_inj : ∀ {α : Type v} [inst : Lean.Grind.Field α] [inst_1 : LE α] [inst_2 : LT α] [Std.LawfulOrderLT α] [inst_4 : Std.IsLinearOrder α] [Lean.Grind.OrderedRing α] {i j : Nat}, ↑i = ↑j ↔ i = j
-theorem Inkproof.Scale.Categorical.natCast_le_natCast_iff : ∀ {α : Type v} [inst : Lean.Grind.Field α] [inst_1 : LE α] [inst_2 : LT α] [Std.LawfulOrderLT α] [inst_4 : Std.IsLinearOrder α] [Lean.Grind.OrderedRing α] {i j : Nat}, ↑i ≤ ↑j ↔ i ≤ j
-theorem Inkproof.Scale.Categorical.natCast_lt_natCast_iff : ∀ {α : Type v} [inst : Lean.Grind.Field α] [inst_1 : LE α] [inst_2 : LT α] [Std.LawfulOrderLT α] [inst_4 : Std.IsLinearOrder α] [Lean.Grind.OrderedRing α] {i j : Nat}, ↑i < ↑j ↔ i < j
-theorem Inkproof.Scale.Categorical.natCast_lt_natCast_of_lt : ∀ {α : Type v} [inst : Lean.Grind.Field α] [inst_1 : LE α] [inst_2 : LT α] [Std.LawfulOrderLT α] [inst_4 : Std.IsLinearOrder α] [Lean.Grind.OrderedRing α] {i j : Nat}, i < j → ↑i < ↑j
 field Inkproof.Scale.Categorical.rangeEnd : {κ : Type u} → {α : Type v} → Inkproof.Scale.Categorical κ α → α
 field Inkproof.Scale.Categorical.rangeStart : {κ : Type u} → {α : Type v} → Inkproof.Scale.Categorical κ α → α
 def Inkproof.Scale.Categorical.toAffine : {κ : Type u} → {α : Type v} → [NatCast α] → [Sub α] → [Div α] → Inkproof.Scale.Categorical κ α → Inkproof.Scale.Affine α

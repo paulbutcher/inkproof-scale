@@ -65,31 +65,13 @@ section OrderedField
 variable [Field α] [LE α] [LT α] [Std.LawfulOrderLT α] [Std.IsLinearOrder α] [OrderedRing α]
   (s : Categorical κ α)
 
-theorem natCast_lt_natCast_of_lt {i j : Nat} (h : i < j) : (i : α) < (j : α) := by
-  have h1 := OrderedRing.zero_lt_one (R := α)
-  induction j with
-  | zero => omega
-  | succ j ih =>
-    rw [Semiring.natCast_succ j]
-    rcases Nat.lt_succ_iff_lt_or_eq.mp h with h' | h'
-    · have := ih h'; grind
-    · subst h'; grind
+private theorem natCast_lt_natCast_iff {i j : Nat} : (i : α) < (j : α) ↔ i < j :=
+  ⟨OrderedRing.lt_of_natCast_lt_natCast i j, OrderedRing.natCast_lt_natCast_of_lt i j⟩
 
-/-- Natural numbers are ordered as their images in the field are. -/
-theorem natCast_lt_natCast_iff {i j : Nat} : (i : α) < (j : α) ↔ i < j := by
-  refine ⟨fun h => ?_, natCast_lt_natCast_of_lt⟩
-  rcases Nat.lt_or_ge i j with h' | h'
-  · exact h'
-  · rcases Nat.eq_or_lt_of_le h' with h'' | h''
-    · subst h''; grind
-    · have := natCast_lt_natCast_of_lt (α := α) h''; grind
+private theorem natCast_le_natCast_iff {i j : Nat} : (i : α) ≤ (j : α) ↔ i ≤ j :=
+  ⟨OrderedRing.le_of_natCast_le_natCast i j, OrderedRing.natCast_le_natCast_of_le i j⟩
 
-/-- Natural numbers are ordered as their images in the field are. -/
-theorem natCast_le_natCast_iff {i j : Nat} : (i : α) ≤ (j : α) ↔ i ≤ j := by
-  have := @natCast_lt_natCast_iff α _ _ _ _ _ _ j i
-  grind
-
-theorem natCast_inj {i j : Nat} : (i : α) = (j : α) ↔ i = j := by
+private theorem natCast_inj {i j : Nat} : (i : α) = (j : α) ↔ i = j := by
   refine ⟨fun h => ?_, fun h => by rw [h]⟩
   have h1 := natCast_le_natCast_iff (α := α) (i := i) (j := j)
   have h2 := natCast_le_natCast_iff (α := α) (i := j) (j := i)

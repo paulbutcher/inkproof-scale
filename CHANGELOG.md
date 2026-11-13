@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.4.0]
+
+- The natural-number cast lemmas are no longer published; use `Lean.Grind.OrderedRing` in Lean core.
+
 ## [0.3.0]
 
 - Log, elapsed-duration and categorical scales, with monotonicity, inversion and composition proved.
