@@ -30,7 +30,7 @@ These hold for any ordered field: a type with Lean core's `Lean.Grind.Field`, `L
 - A linear scale with a nondegenerate domain and range is undone by its inverse, in both directions (`Linear.inv_map_map`, `Linear.map_inv_map`).
 - A linear scale preserves order when its domain and range run the same way, and reverses it when they run opposite ways, as with screen y (`Linear.map_le_map_iff_of_increasing`, `Linear.map_le_map_iff_of_decreasing` and their strict variants).
 
-`Float` is not covered: it is not a field, and floats are opaque to proofs. Float scales run the same code, and the tests check that rounding keeps order and that round trips land within a relative `1e-12`. A check in the tests fails if any axiom beyond Lean's own creeps in. [DESIGN.md](DESIGN.md) describes the design, and `API.lock` lists every public declaration and theorem statement.
+`Float` is not covered by the theorems: it is not a field (rounding breaks the field laws), though Lean models it as IEEE 754 binary64, so it is not opaque to proofs. Float scales run the same code, and the tests check that rounding keeps order and that round trips land within a relative `1e-12`. A check in the tests fails if any axiom beyond Lean's own and those in `Inkproof.Core.Axioms` creeps in. [DESIGN.md](DESIGN.md) describes the design, and `API.lock` lists every public declaration and theorem statement.
 
 ## Trusted computing base
 

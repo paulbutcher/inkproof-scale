@@ -14,7 +14,7 @@ Inkproof.Scale maps values between data space and screen space with scales and a
 - Definitions take only the operations they compute with (`Add`, `Mul`, `Div` and so on), so the same code runs on `Rat`, `Float` or a consumer's own type.
 - Theorems are stated over any ordered field, given by Lean core's `Lean.Grind.Field`, `Lean.Grind.OrderedRing`, `Std.IsLinearOrder` and `Std.LawfulOrderLT` (FP-1), the classes Lean's own ordered-field lemmas use. `Rat` has them all. The library does not use Mathlib.
 - Order hypotheses appear only on the theorems about order; the algebraic theorems need only `Lean.Grind.Field`.
-- Nondegeneracy (`slope ≠ 0`, `domainStart ≠ domainEnd`) is a theorem hypothesis, not a structure field. A field would need a proof about `Float` equality, which floats, opaque to proofs, cannot give.
+- Nondegeneracy (`slope ≠ 0`, `domainStart ≠ domainEnd`) is a theorem hypothesis, not a structure field. A field would need a proof of nondegeneracy for every `Float` scale.
 
 ## Affine transforms
 
@@ -57,7 +57,7 @@ Inkproof.Scale maps values between data space and screen space with scales and a
 
 ## Floats
 
-- `Float` is not covered by the theorems: it is not a field, and floats are opaque to proofs. Float scales run the same definitions, and the tests check what rounding must still preserve: non-strict order, `domainStart` mapping exactly to `rangeStart`, and round trips to within a relative `1e-12`.
+- `Float` is not covered by the theorems: it is not a field, though Lean models it as IEEE 754 binary64, so it is not opaque to proofs. Float scales run the same definitions, and the tests check what rounding must still preserve: non-strict order, `domainStart` mapping exactly to `rangeStart`, and round trips to within a relative `1e-12`.
 - `Inkproof.Scale.Proofs.FloatBound` proves the Float affine, linear and rebased maps within an explicit multiple of `2 ^ -49` of the exact result, assuming no overflow or subnormal intermediate; binary32 is not covered.
 
 ## Testing
