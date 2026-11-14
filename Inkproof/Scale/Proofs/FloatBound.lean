@@ -34,8 +34,11 @@ private theorem k_facts : (0 : Rat) ≤ (scaleTwoPow 1 53)⁻¹ ∧ (scaleTwoPow
 
 private theorem approx_rel {z : Float} {r : Rat} (h : Float.Approximates z r) :
     ∃ q, Float.toRat z = some q ∧ (q - r).abs ≤ r.abs * (scaleTwoPow 1 53)⁻¹ := by
-  obtain ⟨q, hq, hb⟩ := h
-  exact ⟨q, hq, by rwa [Rat.div_def] at hb⟩
+  obtain ⟨q, δ, hq, hδ, e⟩ := h.rel
+  refine ⟨q, hq, ?_⟩
+  have : q - r = r * δ := by rw [e]; grind
+  rw [this, rat_abs_mul, Rat.div_def, Rat.one_mul] at *
+  exact Rat.mul_le_mul_of_nonneg_left hδ Rat.abs_nonneg
 
 private theorem mulAbs (a b c : Rat) {k : Rat} (h : b.abs ≤ c.abs * k) :
     (a * b).abs ≤ (a * c).abs * k := by
