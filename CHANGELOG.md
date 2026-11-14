@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.5.0]
+
+- The float error proofs use `inkproof-core` v0.6.0's `Rat.abs` lemmas in place of private copies; the theorem statements say `Rat.abs` where they said `ratAbs`.
+
 ## [0.4.2]
 
 - The README states that the float error theorems rely on Core's `float_rounding_model` axiom.
