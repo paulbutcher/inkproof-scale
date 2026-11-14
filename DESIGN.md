@@ -58,7 +58,7 @@ Inkproof.Scale maps values between data space and screen space with scales and a
 ## Floats
 
 - `Float` is not covered by the theorems: it is not a field, though Lean models it as IEEE 754 binary64, so it is not opaque to proofs. Float scales run the same definitions, and the tests check what rounding must still preserve: non-strict order, `domainStart` mapping exactly to `rangeStart`, and round trips to within a relative `1e-12`.
-- `Inkproof.Scale.Proofs.FloatBound` proves the Float affine, linear and rebased maps within an explicit multiple of `2 ^ -49` of the exact result, assuming no overflow or subnormal intermediate; binary32 is not covered.
+- `Inkproof.Scale.Proofs.FloatBound` proves the Float affine, linear and rebased maps within an explicit multiple of `2 ^ -49` of the exact result, assuming no overflow or subnormal intermediate; binary32 is not covered, though `inkproof-float` now provides the format-parameterised lemmas it would need.
 
 ## Testing
 

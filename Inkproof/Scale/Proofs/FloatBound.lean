@@ -3,6 +3,7 @@ Copyright (c) 2026 Paul Butcher. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import Inkproof.Float.Axioms
+import Inkproof.Float.RelError
 import Inkproof.Scale.Affine
 import Inkproof.Scale.Linear
 
@@ -10,22 +11,6 @@ namespace Inkproof.Scale
 
 open Inkproof.Float
 
-
-private theorem step (q p m d k : Rat) (hk0 : 0 ≤ k) (hk1 : k ≤ 1) (h1 : (p - m).abs ≤ m.abs * k)
-    (h2 : (q - (p + d)).abs ≤ (p + d).abs * k) :
-    (q - (m + d)).abs ≤ 4 * (m.abs + d.abs) * k := by
-  have a1 := rat_abs_add_le (q - (p + d)) (p - m)
-  have a2 := rat_abs_add_le p d
-  have a3 := rat_abs_add_le (p - m) m
-  have n1 := (Rat.abs_nonneg (x := m))
-  have n2 := (Rat.abs_nonneg (x := d))
-  have e : q - (m + d) = (q - (p + d)) + (p - m) := by grind
-  rw [e]
-  have k1 : m.abs * k ≤ m.abs * 1 := Rat.mul_le_mul_of_nonneg_left hk1 n1
-  have k2 : (p + d).abs * k ≤ (3 * m.abs + d.abs) * k :=
-    Rat.mul_le_mul_of_nonneg_right (by grind) hk0
-  have := Rat.mul_nonneg n2 hk0
-  grind
 
 private theorem k_facts : (0 : Rat) ≤ (scaleTwoPow 1 53)⁻¹ ∧ (scaleTwoPow 1 53)⁻¹ ≤ 1 / 8 := by
   have h : scaleTwoPow 1 53 = 9007199254740992 := by
@@ -40,12 +25,6 @@ private theorem approx_rel {z : Float} {r : Rat} (h : Float.Approximates z r) :
   rw [this, rat_abs_mul, Rat.div_def, Rat.one_mul] at *
   exact Rat.mul_le_mul_of_nonneg_left hδ Rat.abs_nonneg
 
-private theorem mulAbs (a b c : Rat) {k : Rat} (h : b.abs ≤ c.abs * k) :
-    (a * b).abs ≤ (a * c).abs * k := by
-  rw [rat_abs_mul, rat_abs_mul]
-  have := Rat.mul_le_mul_of_nonneg_left h ((Rat.abs_nonneg (x := a)))
-  grind
-
 private theorem rebased_core (a b w d xo po pm c' z k : Rat) (hk0 : 0 ≤ k) (hk1 : k ≤ 1 / 8)
     (e_po : (po - a * w).abs ≤ (a * w).abs * k)
     (e_c : (c' - (po + d)).abs ≤ (po + d).abs * k)
@@ -53,8 +32,11 @@ private theorem rebased_core (a b w d xo po pm c' z k : Rat) (hk0 : 0 ≤ k) (hk
     (e_pm : (pm - a * xo).abs ≤ (a * xo).abs * k)
     (e_z : (z - (pm + c')).abs ≤ (pm + c').abs * k) :
     (z - (a * b + d)).abs ≤ 8 * ((a * (b - w)).abs + (a * w).abs + d.abs) * k := by
-  have hc := step c' po (a * w) d k hk0 (by grind) e_po e_c
-  have hx := mulAbs a (xo - (b - w)) (b - w) e_xo
+  have hc := rel_error_step c' po (a * w) d k hk0 (by grind) e_po e_c
+  have hx : (a * (xo - (b - w))).abs ≤ (a * (b - w)).abs * k := by
+    rw [rat_abs_mul, rat_abs_mul]
+    have := Rat.mul_le_mul_of_nonneg_left e_xo (Rat.abs_nonneg (x := a))
+    grind
   have nU := (Rat.abs_nonneg (x := (a * (b - w))))
   have nW := (Rat.abs_nonneg (x := (a * w)))
   have nD := (Rat.abs_nonneg (x := d))
@@ -108,74 +90,6 @@ private theorem k_eight : 8 * (scaleTwoPow 1 53)⁻¹ = (scaleTwoPow 1 50)⁻¹ 
     rw [scaleTwoPow_of_nonneg _ (by decide)]; simp
   rw [h, h']; grind
 
-private theorem mulLe {a b c d : Rat} (h1 : a ≤ c) (h2 : b ≤ d) (hb : 0 ≤ b) (hc : 0 ≤ c) :
-    a * b ≤ c * d :=
-  Rat.le_trans (Rat.mul_le_mul_of_nonneg_right h1 hb) (Rat.mul_le_mul_of_nonneg_left h2 hc)
-
-private theorem mul_rel (x y a b c1 c2 : Rat) (hc1 : 0 ≤ c1)
-    (h1 : (x - a).abs ≤ a.abs * c1) (h2 : (y - b).abs ≤ b.abs * c2) :
-    (x * y - a * b).abs ≤ (a * b).abs * (c1 + c2 + c1 * c2) := by
-  have e : x * y - a * b = (x - a) * (y - b) + (x - a) * b + a * (y - b) := by grind
-  have t1 := rat_abs_add_le ((x - a) * (y - b) + (x - a) * b) (a * (y - b))
-  have t2 := rat_abs_add_le ((x - a) * (y - b)) ((x - a) * b)
-  have m1 : ((x - a) * (y - b)).abs ≤ (a.abs * c1) * (b.abs * c2) := by
-    rw [rat_abs_mul]
-    exact mulLe h1 h2 (Rat.abs_nonneg) (Rat.mul_nonneg (Rat.abs_nonneg) hc1)
-  have m2 : ((x - a) * b).abs ≤ (a.abs * c1) * b.abs := by
-    rw [rat_abs_mul]
-    exact Rat.mul_le_mul_of_nonneg_right h1 (Rat.abs_nonneg)
-  have m3 : (a * (y - b)).abs ≤ a.abs * (b.abs * c2) := by
-    rw [rat_abs_mul]
-    exact Rat.mul_le_mul_of_nonneg_left h2 (Rat.abs_nonneg)
-  rw [e, rat_abs_mul a b]
-  grind
-
-private theorem round_rel (z x r c k : Rat) (hk : 0 ≤ k)
-    (h1 : (x - r).abs ≤ r.abs * c) (h2 : (z - x).abs ≤ x.abs * k) :
-    (z - r).abs ≤ r.abs * (c + k + c * k) := by
-  have t := rat_abs_add_le (z - x) (x - r)
-  have t' := rat_abs_add_le (x - r) r
-  have e : z - r = (z - x) + (x - r) := by grind
-  have m := Rat.mul_le_mul_of_nonneg_right (show x.abs ≤ r.abs + r.abs * c by grind) hk
-  rw [e]
-  grind
-
-private theorem div_rel (t4 t3 v A B C u c4 k c : Rat) (hk1 : k < 1)
-    (hC : C ≠ 0) (hu : u * C = A * B)
-    (h4 : (t4 - A * B).abs ≤ (A * B).abs * c4) (h3 : (t3 - C).abs ≤ C.abs * k)
-    (hv : v * t3 = t4) (hc : c4 + k ≤ c * (1 - k)) :
-    (v - u).abs ≤ u.abs * c := by
-  have hCpos : 0 < C.abs := by
-    unfold Rat.abs; split <;> grind
-  have e : (v - u) * t3 = (t4 - A * B) + u * (C - t3) := by grind
-  have lhs : ((v - u) * t3).abs = (v - u).abs * t3.abs := rat_abs_mul _ _
-  have t := rat_abs_add_le (t4 - A * B) (u * (C - t3))
-  have hAB : (A * B).abs = u.abs * C.abs := by rw [← hu, rat_abs_mul]
-  have hCt : (C - t3).abs = (t3 - C).abs := by
-    unfold Rat.abs; split <;> split <;> grind
-  have m1 : (u * (C - t3)).abs ≤ u.abs * (C.abs * k) := by
-    rw [rat_abs_mul, hCt]
-    exact Rat.mul_le_mul_of_nonneg_left h3 (Rat.abs_nonneg)
-  have t3b : C.abs * (1 - k) ≤ t3.abs := by
-    have := rat_abs_add_le t3 (C - t3)
-    have e3 : t3 + (C - t3) = C := by grind
-    rw [e3] at this
-    grind
-  have nv := (Rat.abs_nonneg (x := (v - u)))
-  have nu := (Rat.abs_nonneg (x := u))
-  have hw : 0 < C.abs * (1 - k) := Rat.mul_pos hCpos (by grind)
-  have step1 : (v - u).abs * (C.abs * (1 - k)) ≤ (v - u).abs * t3.abs :=
-    Rat.mul_le_mul_of_nonneg_left t3b nv
-  have step2 : (v - u).abs * t3.abs ≤ u.abs * C.abs * (c4 + k) := by
-    rw [← lhs, e]
-    rw [hAB] at h4
-    grind
-  have step3 : u.abs * C.abs * (c4 + k) ≤ u.abs * C.abs * (c * (1 - k)) :=
-    Rat.mul_le_mul_of_nonneg_left hc (Rat.mul_nonneg nu (Rat.abs_nonneg))
-  have : (v - u).abs * (C.abs * (1 - k)) ≤ (u.abs * c) * (C.abs * (1 - k)) := by
-    grind
-  exact Rat.le_of_mul_le_mul_right this hw
-
 private theorem lin_core (X P Q R S t1 t2 t4 t3 t5 z k : Rat) (hk0 : 0 ≤ k) (hk1 : k ≤ 1 / 8)
     (hC : Q - P ≠ 0)
     (e1 : (t1 - (X - P)).abs ≤ (X - P).abs * k)
@@ -188,13 +102,13 @@ private theorem lin_core (X P Q R S t1 t2 t4 t3 t5 z k : Rat) (hk0 : 0 ≤ k) (h
       16 * (((X - P) * (S - R) / (Q - P)).abs + R.abs) * k := by
   have kk : k * k ≤ k * (1 / 8) := Rat.mul_le_mul_of_nonneg_left hk1 hk0
   have kkk : k * k * k ≤ k * k * (1 / 8) := Rat.mul_le_mul_of_nonneg_left hk1 (Rat.mul_nonneg hk0 hk0)
-  have m := mul_rel t1 t2 (X - P) (S - R) k k hk0 e1 e2
-  have r4 := round_rel t4 (t1 * t2) ((X - P) * (S - R)) (k + k + k * k) k hk0 m e4
+  have m := rel_error_mul t1 t2 (X - P) (S - R) k k hk0 e1 e2
+  have r4 := rel_error_round t4 (t1 * t2) ((X - P) * (S - R)) (k + k + k * k) k hk0 m e4
   have hu : ((X - P) * (S - R) / (Q - P)) * (Q - P) = (X - P) * (S - R) := Rat.div_mul_cancel hC
   have hv : (t4 / t3) * t3 = t4 := Rat.div_mul_cancel hne
-  have d := div_rel t4 t3 (t4 / t3) (X - P) (S - R) (Q - P) ((X - P) * (S - R) / (Q - P))
+  have d := rel_error_div t4 t3 (t4 / t3) (X - P) (S - R) (Q - P) ((X - P) * (S - R) / (Q - P))
     (k + k + k * k + k + (k + k + k * k) * k) k (7 * k) (by grind) hC hu r4 e3 hv (by grind)
-  have r5 := round_rel t5 (t4 / t3) _ (7 * k) k hk0 d e5
+  have r5 := rel_error_round t5 (t4 / t3) _ (7 * k) k hk0 d e5
   generalize (X - P) * (S - R) / (Q - P) = u at *
   have nu := (Rat.abs_nonneg (x := u))
   have nR := (Rat.abs_nonneg (x := R))

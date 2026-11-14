@@ -2,7 +2,8 @@
 
 ## [0.6.0]
 
-- Depends on `inkproof-float` v0.1.0 instead of `inkproof-core`; the float error theorems are stated over `Inkproof.Float` names.
+- Depends on `inkproof-float` v0.2.0 instead of `inkproof-core`; the float error theorems are stated over `Inkproof.Float` names.
+- Uses `inkproof-float`'s relative-error lemmas in place of private copies.
 
 ## [0.5.2]
 
