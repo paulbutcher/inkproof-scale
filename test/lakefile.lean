@@ -13,7 +13,7 @@ package «inkproof-scale-test» where
   ]
 
 require «inkproof-scale» from ".."
-require «inkproof-tools» from git "https://github.com/paulbutcher/inkproof-tools" @ "v0.1.0"
+require «inkproof-tools» from git "https://github.com/paulbutcher/inkproof-tools" @ "v0.2.0"
 
 -- Compile-time tests: compiling is passing.
 @[default_target]

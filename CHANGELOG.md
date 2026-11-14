@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.5.2]
+
+- Development tooling and the axiom check come from `inkproof-tools` v0.2.0; `inkproof-core` is required at v0.6.1.
+
 ## [0.5.1]
 
 - `approx_rel` in the float error proofs is derived from Core's `Float.Approximates.rel`.
