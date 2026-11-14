@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # Prints the public API of Inkproof.Scale, one line per declaration; CI compares it with API.lock.
-# The generator is Inkproof.Core's api-lock executable. Regenerate with: scripts/api-lock.sh > API.lock
+# Regenerate with: scripts/api-lock.sh > API.lock
 set -euo pipefail
-cd "$(dirname "$0")/.."
-lake build InkproofScale inkproof-core/api-lock >&2
+cd "$(dirname "$0")/../test"
+lake build InkproofScale inkproof-tools/api-lock >&2
 
 # Lean resolves a module by its first path component, so with Inkproof.Core and Inkproof.Scale in
 # different build directories the generator would look for both in one. Merge their `Inkproof`
@@ -19,4 +19,4 @@ for d in "${dirs[@]}"; do
   done
 done
 LEAN_PATH="$merged:$(IFS=:; echo "${dirs[*]}")" \
-  "$(lake query inkproof-core/api-lock 2>/dev/null)" Inkproof.Scale Inkproof.Scale.Proofs
+  "$(lake query inkproof-tools/api-lock 2>/dev/null)" Inkproof.Scale Inkproof.Scale.Proofs

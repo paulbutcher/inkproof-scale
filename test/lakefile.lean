@@ -13,6 +13,7 @@ package «inkproof-scale-test» where
   ]
 
 require «inkproof-scale» from ".."
+require «inkproof-tools» from git "https://github.com/paulbutcher/inkproof-tools" @ "v0.1.0"
 
 -- Compile-time tests: compiling is passing.
 @[default_target]
@@ -28,5 +29,5 @@ lean_exe tests where
 @[test_driver]
 script test do
   let child ← IO.Process.spawn
-    { cmd := "lake", args := #["exe", "inkproof-core/inkproof-test-driver"], cwd := __dir__ }
+    { cmd := "lake", args := #["exe", "inkproof-tools/inkproof-test-driver"], cwd := __dir__ }
   return if (← child.wait) == 0 then 0 else 1
