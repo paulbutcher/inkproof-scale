@@ -8,9 +8,9 @@ import Inkproof.Scale.Proofs
 import InkproofTools.AxiomCheck
 
 /-! PROC-1: compiling this module fails if any declaration of the library depends on an axiom other
-than Lean's own and those Inkproof.Core lists in `Inkproof.Core.Axioms`, or if the library declares
+than Lean's own and those in `Inkproof.Float.Axioms`, or if the library declares
 an axiom of its own. -/
 
 open Lean Elab Command
 
-run_cmd liftCoreM (InkproofTools.AxiomCheck.check `Inkproof.Scale none [`Inkproof.Core.Axioms])
+run_cmd liftCoreM (InkproofTools.AxiomCheck.check `Inkproof.Scale none [`Inkproof.Float.Axioms])

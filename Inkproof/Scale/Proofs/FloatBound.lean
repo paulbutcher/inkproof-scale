@@ -2,13 +2,13 @@
 Copyright (c) 2026 Paul Butcher. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import Inkproof.Core.Axioms
+import Inkproof.Float.Axioms
 import Inkproof.Scale.Affine
 import Inkproof.Scale.Linear
 
 namespace Inkproof.Scale
 
-open Inkproof.Core
+open Inkproof.Float
 
 
 private theorem step (q p m d k : Rat) (hk0 : 0 ≤ k) (hk1 : k ≤ 1) (h1 : (p - m).abs ≤ m.abs * k)

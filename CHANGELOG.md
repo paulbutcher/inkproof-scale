@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.6.0]
+
+- Depends on `inkproof-float` v0.1.0 instead of `inkproof-core`; the float error theorems are stated over `Inkproof.Float` names.
+
 ## [0.5.2]
 
 - Development tooling and the axiom check come from `inkproof-tools` v0.2.0; `inkproof-core` is required at v0.6.1.

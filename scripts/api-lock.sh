@@ -5,7 +5,7 @@ set -euo pipefail
 cd "$(dirname "$0")/../test"
 lake build InkproofScale inkproof-tools/api-lock >&2
 
-# Lean resolves a module by its first path component, so with Inkproof.Core and Inkproof.Scale in
+# Lean resolves a module by its first path component, so with Inkproof.Float and Inkproof.Scale in
 # different build directories the generator would look for both in one. Merge their `Inkproof`
 # directories with links.
 merged="$(mktemp -d)"

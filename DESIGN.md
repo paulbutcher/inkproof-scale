@@ -4,10 +4,10 @@ Inkproof.Scale maps values between data space and screen space with scales and a
 
 ## Packages and modules
 
-- The package `inkproof-scale` depends only on `inkproof-core`, at a release tag, and on Lean at the toolchain Lasm supports (`lean-toolchain`); it builds natively and under Lasm from the same source (ARCH-1, PLAT-1).
+- The package `inkproof-scale` depends only on `inkproof-float`, at a release tag, and on Lean at the toolchain Lasm supports (`lean-toolchain`); it builds natively and under Lasm from the same source (ARCH-1, PLAT-1).
 - Runtime modules live under `Inkproof.Scale`, and `import Inkproof.Scale` brings in all of them; this is what a browser build links.
 - Published theorems live under `Inkproof.Scale.Proofs`, which runtime modules never import (PROC-5, PLAT-3).
-- The library declares no axioms. The tests fail if a declaration depends on any axiom beyond Lean's `propext`, `Classical.choice` and `Quot.sound` and those in `Inkproof.Core.Axioms` (PROC-1).
+- The library declares no axioms. The tests fail if a declaration depends on any axiom beyond Lean's `propext`, `Classical.choice` and `Quot.sound` and those in `Inkproof.Float.Axioms` (PROC-1).
 
 ## Generic foundations
 
@@ -67,4 +67,4 @@ Inkproof.Scale maps values between data space and screen space with scales and a
 
 ## API lock
 
-- `scripts/api-lock.sh` runs Inkproof.Core's `api-lock` executable over `Inkproof.Scale` and `Inkproof.Scale.Proofs`: one line per public declaration, with theorem statements as their types. CI compares the output with `API.lock`, and CODEOWNERS sends changes to the human.
+- `scripts/api-lock.sh` runs the `api-lock` executable from inkproof-tools executable over `Inkproof.Scale` and `Inkproof.Scale.Proofs`: one line per public declaration, with theorem statements as their types. CI compares the output with `API.lock`, and CODEOWNERS sends changes to the human.
