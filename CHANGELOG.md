@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.5.1]
+
+- `approx_rel` in the float error proofs is derived from Core's `Float.Approximates.rel`.
+
 ## [0.5.0]
 
 - The float error proofs use `inkproof-core` v0.6.0's `Rat.abs` lemmas in place of private copies; the theorem statements say `Rat.abs` where they said `ratAbs`.
