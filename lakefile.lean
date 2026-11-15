@@ -12,7 +12,7 @@ package «inkproof-scale» where
     ⟨`warningAsError, true⟩
   ]
 
-require «inkproof-float» from git "https://github.com/paulbutcher/inkproof-float" @ "v0.2.0"
+require «inkproof-float» from git "https://github.com/paulbutcher/inkproof-float" @ "v0.4.0"
 
 @[default_target]
 lean_lib InkproofScale where

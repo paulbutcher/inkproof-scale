@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.6.1]
+
+- Depends on `inkproof-float` v0.4.0 and uses its rounding-unit lemmas in place of private constants.
+
 ## [0.6.0]
 
 - Depends on `inkproof-float` v0.2.0 instead of `inkproof-core`; the float error theorems are stated over `Inkproof.Float` names.

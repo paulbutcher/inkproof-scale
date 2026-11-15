@@ -12,18 +12,10 @@ namespace Inkproof.Scale
 open Inkproof.Float
 
 
-private theorem k_facts : (0 : Rat) ≤ (scaleTwoPow 1 53)⁻¹ ∧ (scaleTwoPow 1 53)⁻¹ ≤ 1 / 8 := by
-  have h : scaleTwoPow 1 53 = 9007199254740992 := by
-    rw [scaleTwoPow_of_nonneg _ (by decide)]; simp
-  rw [h]; constructor <;> grind
+private abbrev b64 : FloatFormat := FloatFormat.binary64
 
-private theorem approx_rel {z : Float} {r : Rat} (h : Float.Approximates z r) :
-    ∃ q, Float.toRat z = some q ∧ (q - r).abs ≤ r.abs * (scaleTwoPow 1 53)⁻¹ := by
-  obtain ⟨q, δ, hq, hδ, e⟩ := h.rel
-  refine ⟨q, hq, ?_⟩
-  have : q - r = r * δ := by rw [e]; grind
-  rw [this, rat_abs_mul, Rat.div_def, Rat.one_mul] at *
-  exact Rat.mul_le_mul_of_nonneg_left hδ Rat.abs_nonneg
+private theorem k_facts : (0 : Rat) ≤ (scaleTwoPow 1 b64.prec)⁻¹ ∧ (scaleTwoPow 1 b64.prec)⁻¹ ≤ 1 / 8 :=
+  ⟨Rat.le_of_lt b64.rounding_unit_pos, b64.rounding_unit_le_eighth (by decide)⟩
 
 private theorem rebased_core (a b w d xo po pm c' z k : Rat) (hk0 : 0 ≤ k) (hk1 : k ≤ 1 / 8)
     (e_po : (po - a * w).abs ≤ (a * w).abs * k)
@@ -76,19 +68,11 @@ private theorem rebased_core (a b w d xo po pm c' z k : Rat) (hk0 : 0 ≤ k) (hk
   grind
 
 
-private theorem k_sixteen : 16 * (scaleTwoPow 1 53)⁻¹ = (scaleTwoPow 1 49)⁻¹ := by
-  have h : scaleTwoPow 1 53 = 9007199254740992 := by
-    rw [scaleTwoPow_of_nonneg _ (by decide)]; simp
-  have h' : scaleTwoPow 1 49 = 562949953421312 := by
-    rw [scaleTwoPow_of_nonneg _ (by decide)]; simp
-  rw [h, h']; grind
+private theorem k_sixteen : 16 * (scaleTwoPow 1 b64.prec)⁻¹ = (scaleTwoPow 1 49)⁻¹ :=
+  b64.pow_mul_rounding_unit (k := 4) (by decide)
 
-private theorem k_eight : 8 * (scaleTwoPow 1 53)⁻¹ = (scaleTwoPow 1 50)⁻¹ := by
-  have h : scaleTwoPow 1 53 = 9007199254740992 := by
-    rw [scaleTwoPow_of_nonneg _ (by decide)]; simp
-  have h' : scaleTwoPow 1 50 = 1125899906842624 := by
-    rw [scaleTwoPow_of_nonneg _ (by decide)]; simp
-  rw [h, h']; grind
+private theorem k_eight : 8 * (scaleTwoPow 1 b64.prec)⁻¹ = (scaleTwoPow 1 50)⁻¹ :=
+  b64.pow_mul_rounding_unit (k := 3) (by decide)
 
 private theorem lin_core (X P Q R S t1 t2 t4 t3 t5 z k : Rat) (hk0 : 0 ≤ k) (hk1 : k ≤ 1 / 8)
     (hC : Q - P ≠ 0)
@@ -206,11 +190,11 @@ theorem Affine.rebase_apply_float_error (t : Affine Float) (o x : Float) {a w b 
     ∃ q, Float.toRat ((t.rebase o).apply (x - o)) = some q ∧
       (q - (a * b + d)).abs ≤
         ((a * (b - w)).abs + (a * w).abs + d.abs) / scaleTwoPow 1 50 := by
-  obtain ⟨po, hpo, e_po⟩ := approx_rel (Float.approximates_mul hs ho n1)
-  obtain ⟨c', hc', e_c⟩ := approx_rel (Float.approximates_add hpo hc (n2 po hpo))
-  obtain ⟨xo, hxo, e_xo⟩ := approx_rel (Float.approximates_sub hx ho n3)
-  obtain ⟨pm, hpm, e_pm⟩ := approx_rel (Float.approximates_mul hs hxo (n4 xo hxo))
-  obtain ⟨z, hz, e_z⟩ := approx_rel (Float.approximates_add hpm hc' (n5 pm c' hpm hc'))
+  obtain ⟨po, hpo, e_po⟩ := FloatFormat.Approx.abs_le (Float.approximates_mul hs ho n1)
+  obtain ⟨c', hc', e_c⟩ := FloatFormat.Approx.abs_le (Float.approximates_add hpo hc (n2 po hpo))
+  obtain ⟨xo, hxo, e_xo⟩ := FloatFormat.Approx.abs_le (Float.approximates_sub hx ho n3)
+  obtain ⟨pm, hpm, e_pm⟩ := FloatFormat.Approx.abs_le (Float.approximates_mul hs hxo (n4 xo hxo))
+  obtain ⟨z, hz, e_z⟩ := FloatFormat.Approx.abs_le (Float.approximates_add hpm hc' (n5 pm c' hpm hc'))
   refine ⟨z, ?_, ?_⟩
   · simpa [Affine.apply, Affine.rebase] using hz
   · have := rebased_core a b w d xo po pm c' z _ k_facts.1 k_facts.2 e_po e_c e_xo e_pm e_z
@@ -243,22 +227,22 @@ theorem Linear.map_float_error (s : Linear Float) (x : Float) {X P Q R S : Rat}
       (q - (R + (X - P) * (S - R) / (Q - P))).abs ≤
         (((X - P) * (S - R) / (Q - P)).abs + R.abs) / scaleTwoPow 1 49 := by
   obtain ⟨n1, n2, n3, n4, n5, n6⟩ := hn X P Q R S hx hp hq hr hs
-  obtain ⟨t1, h1, e1⟩ := approx_rel (Float.approximates_sub hx hp n1)
-  obtain ⟨t2, h2, e2⟩ := approx_rel (Float.approximates_sub hs hr n2)
-  obtain ⟨t4, h4, e4⟩ := approx_rel (Float.approximates_mul h1 h2 (n4 t1 t2 h1 h2))
-  obtain ⟨t3, h3, e3⟩ := approx_rel (Float.approximates_sub hq hp n3)
+  obtain ⟨t1, h1, e1⟩ := FloatFormat.Approx.abs_le (Float.approximates_sub hx hp n1)
+  obtain ⟨t2, h2, e2⟩ := FloatFormat.Approx.abs_le (Float.approximates_sub hs hr n2)
+  obtain ⟨t4, h4, e4⟩ := FloatFormat.Approx.abs_le (Float.approximates_mul h1 h2 (n4 t1 t2 h1 h2))
+  obtain ⟨t3, h3, e3⟩ := FloatFormat.Approx.abs_le (Float.approximates_sub hq hp n3)
   have hne : t3 ≠ 0 := by
     intro h0
     rw [h0] at e3
     have hpos : 0 < (Q - P).abs := by unfold Rat.abs; split <;> grind
     have := k_facts
-    have := Rat.mul_le_mul_of_nonneg_left (show (scaleTwoPow 1 53)⁻¹ ≤ 1 / 8 from this.2) (Rat.le_of_lt hpos)
+    have := Rat.mul_le_mul_of_nonneg_left (show (scaleTwoPow 1 b64.prec)⁻¹ ≤ 1 / 8 from this.2) (Rat.le_of_lt hpos)
     have h' : (0 - (Q - P)).abs = (Q - P).abs := by
       unfold Rat.abs; split <;> split <;> grind
     rw [h'] at e3
     grind
-  obtain ⟨t5, h5, e5⟩ := approx_rel (Float.approximates_div h4 h3 hne (n5 t4 t3 h4 h3))
-  obtain ⟨z, hz, ez⟩ := approx_rel (Float.approximates_add hr h5 (n6 t5 h5))
+  obtain ⟨t5, h5, e5⟩ := FloatFormat.Approx.abs_le (Float.approximates_div h4 h3 hne (n5 t4 t3 h4 h3))
+  obtain ⟨z, hz, ez⟩ := FloatFormat.Approx.abs_le (Float.approximates_add hr h5 (n6 t5 h5))
   refine ⟨z, hz, ?_⟩
   have := lin_core X P Q R S t1 t2 t4 t3 t5 z _ k_facts.1 k_facts.2 hC e1 e2 e4 e3 hne e5 ez
   rw [Rat.div_def _ (scaleTwoPow 1 49), ← k_sixteen]
@@ -285,17 +269,16 @@ theorem Linear.rebase_map_float_error (s : Linear Float) (o x : Float) {X W P Q 
           ((S - R).abs * ((X - W).abs + (P - W).abs) +
             ((X - P) * (S - R) / (Q - P)).abs * ((Q - W).abs + (P - W).abs)) /
             (Q - P).abs) / scaleTwoPow 1 49 := by
-  obtain ⟨xo, hxo, exo⟩ := approx_rel (Float.approximates_sub hx ho n1)
-  obtain ⟨po, hpo, epo⟩ := approx_rel (Float.approximates_sub hp ho n2)
-  obtain ⟨qo, hqo, eqo⟩ := approx_rel (Float.approximates_sub hq ho n3)
+  obtain ⟨xo, hxo, exo⟩ := FloatFormat.Approx.abs_le (Float.approximates_sub hx ho n1)
+  obtain ⟨po, hpo, epo⟩ := FloatFormat.Approx.abs_le (Float.approximates_sub hp ho n2)
+  obtain ⟨qo, hqo, eqo⟩ := FloatFormat.Approx.abs_le (Float.approximates_sub hq ho n3)
   have hk := k_facts
-  have hsc : scaleTwoPow 1 53 * (scaleTwoPow 1 53)⁻¹ = 1 := by
-    have h : scaleTwoPow 1 53 = 9007199254740992 := by
-      rw [scaleTwoPow_of_nonneg _ (by decide)]; simp
-    rw [h]; grind
-  have stab : 2 * (scaleTwoPow 1 53)⁻¹ * ((Q - W).abs + (P - W).abs) ≤ (Q - P).abs := by
+  have hsc : scaleTwoPow 1 b64.prec * (scaleTwoPow 1 b64.prec)⁻¹ = 1 :=
+    Rat.mul_inv_cancel _ (Rat.ne_of_gt (scaleTwoPow_one_pos _))
+  have hstable : 2 * ((Q - W).abs + (P - W).abs) ≤ (Q - P).abs * scaleTwoPow 1 b64.prec := hstable
+  have stab : 2 * (scaleTwoPow 1 b64.prec)⁻¹ * ((Q - W).abs + (P - W).abs) ≤ (Q - P).abs := by
     have := Rat.mul_le_mul_of_nonneg_right hstable hk.1
-    rw [Rat.mul_assoc _ (scaleTwoPow 1 53), hsc, Rat.mul_one] at this
+    rw [Rat.mul_assoc _ (scaleTwoPow 1 b64.prec), hsc, Rat.mul_one] at this
     grind
   obtain ⟨hne, hsens⟩ := sens X W P Q R S xo po qo _ hC exo epo eqo stab
   obtain ⟨q, hq', eq⟩ := Linear.map_float_error (s.rebase o) (x - o) (X := xo) (P := po)
@@ -314,9 +297,9 @@ theorem Linear.rebase_map_float_error (s : Linear Float) (o x : Float) {X W P Q 
     u.abs * ((Q - W).abs + (P - W).abs) = num at *
   have hT : num / (Q - P).abs * (Q - P).abs = num := Rat.div_mul_cancel hCne
   generalize num / (Q - P).abs = T at *
-  have hd : (u' - u).abs ≤ 2 * (scaleTwoPow 1 53)⁻¹ * T := by
+  have hd : (u' - u).abs ≤ 2 * (scaleTwoPow 1 b64.prec)⁻¹ * T := by
     apply Rat.le_of_mul_le_mul_right _ hCpos
-    have : 2 * (scaleTwoPow 1 53)⁻¹ * T * (Q - P).abs = 2 * (scaleTwoPow 1 53)⁻¹ * num := by
+    have : 2 * (scaleTwoPow 1 b64.prec)⁻¹ * T * (Q - P).abs = 2 * (scaleTwoPow 1 b64.prec)⁻¹ * num := by
       rw [Rat.mul_assoc, hT]
     rw [this]; exact hsens
   rw [Rat.div_def _ (scaleTwoPow 1 49), ← k_sixteen]
@@ -332,7 +315,7 @@ theorem Linear.rebase_map_float_error (s : Linear Float) (o x : Float) {X W P Q 
   have a2 := Rat.mul_le_mul_of_nonneg_right
     (show u'.abs ≤ u.abs + (u' - u).abs by
       have e' : u' = u + (u' - u) := by grind
-      rw [e']; have := rat_abs_add_le u (u' - u); grind) (show (0:Rat) ≤ 16 * (scaleTwoPow 1 53)⁻¹ by grind)
+      rw [e']; have := rat_abs_add_le u (u' - u); grind) (show (0:Rat) ≤ 16 * (scaleTwoPow 1 b64.prec)⁻¹ by grind)
   have ndT : 0 ≤ T := by
     by_cases h : T < 0
     · have := Rat.mul_pos (show 0 < -T by grind) hCpos
