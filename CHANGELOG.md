@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.7.0]
+
+- Adds `Affine.rebase_apply_float32_error`, the binary32 counterpart of `Affine.rebase_apply_float_error`.
+
 ## [0.6.1]
 
 - Depends on `inkproof-float` v0.4.0 and uses its rounding-unit lemmas in place of private constants.

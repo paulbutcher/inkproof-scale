@@ -14,8 +14,12 @@ open Inkproof.Float
 
 private abbrev b64 : FloatFormat := FloatFormat.binary64
 
+private theorem unit_facts (f : FloatFormat) (h : 3 ≤ f.prec) :
+    (0 : Rat) ≤ (scaleTwoPow 1 f.prec)⁻¹ ∧ (scaleTwoPow 1 f.prec)⁻¹ ≤ 1 / 8 :=
+  ⟨Rat.le_of_lt f.rounding_unit_pos, f.rounding_unit_le_eighth h⟩
+
 private theorem k_facts : (0 : Rat) ≤ (scaleTwoPow 1 b64.prec)⁻¹ ∧ (scaleTwoPow 1 b64.prec)⁻¹ ≤ 1 / 8 :=
-  ⟨Rat.le_of_lt b64.rounding_unit_pos, b64.rounding_unit_le_eighth (by decide)⟩
+  unit_facts b64 (by decide)
 
 private theorem rebased_core (a b w d xo po pm c' z k : Rat) (hk0 : 0 ≤ k) (hk1 : k ≤ 1 / 8)
     (e_po : (po - a * w).abs ≤ (a * w).abs * k)
@@ -199,6 +203,37 @@ theorem Affine.rebase_apply_float_error (t : Affine Float) (o x : Float) {a w b 
   · simpa [Affine.apply, Affine.rebase] using hz
   · have := rebased_core a b w d xo po pm c' z _ k_facts.1 k_facts.2 e_po e_c e_xo e_pm e_z
     rw [Rat.div_def, ← k_eight]
+    grind
+
+/-- The binary32 counterpart of `Affine.rebase_apply_float_error`, with the bound over
+`2 ^ 21`. -/
+theorem Affine.rebase_apply_float32_error (t : Affine Float32) (o x : Float32) {a w b d : Rat}
+    (hs : Float32.toRat t.slope = some a) (ho : Float32.toRat o = some w)
+    (hx : Float32.toRat x = some b) (hc : Float32.toRat t.offset = some d)
+    (n1 : FloatFormat.binary32.NormalRange (a * w))
+    (n2 : ∀ po, Float32.toRat (t.slope * o) = some po →
+      FloatFormat.binary32.NormalRange (po + d))
+    (n3 : FloatFormat.binary32.NormalRange (b - w))
+    (n4 : ∀ xo, Float32.toRat (x - o) = some xo → FloatFormat.binary32.NormalRange (a * xo))
+    (n5 : ∀ pm c', Float32.toRat (t.slope * (x - o)) = some pm →
+      Float32.toRat (t.slope * o + t.offset) = some c' →
+        FloatFormat.binary32.NormalRange (pm + c')) :
+    ∃ q, Float32.toRat ((t.rebase o).apply (x - o)) = some q ∧
+      (q - (a * b + d)).abs ≤
+        ((a * (b - w)).abs + (a * w).abs + d.abs) / scaleTwoPow 1 21 := by
+  obtain ⟨po, hpo, e_po⟩ := FloatFormat.Approx.abs_le (Float32.approximates_mul hs ho n1)
+  obtain ⟨c', hc', e_c⟩ := FloatFormat.Approx.abs_le (Float32.approximates_add hpo hc (n2 po hpo))
+  obtain ⟨xo, hxo, e_xo⟩ := FloatFormat.Approx.abs_le (Float32.approximates_sub hx ho n3)
+  obtain ⟨pm, hpm, e_pm⟩ := FloatFormat.Approx.abs_le (Float32.approximates_mul hs hxo (n4 xo hxo))
+  obtain ⟨z, hz, e_z⟩ := FloatFormat.Approx.abs_le
+    (Float32.approximates_add hpm hc' (n5 pm c' hpm hc'))
+  refine ⟨z, ?_, ?_⟩
+  · simpa [Affine.apply, Affine.rebase] using hz
+  · have hk := unit_facts FloatFormat.binary32 (by decide)
+    have := rebased_core a b w d xo po pm c' z _ hk.1 hk.2 e_po e_c e_xo e_pm e_z
+    have k8 : 8 * (scaleTwoPow 1 FloatFormat.binary32.prec)⁻¹ = (scaleTwoPow 1 21)⁻¹ :=
+      FloatFormat.binary32.pow_mul_rounding_unit (k := 3) (by decide)
+    rw [Rat.div_def, ← k8]
     grind
 
 /-- That no intermediate result of `s.map x` overflows or falls into the subnormal range, for the
