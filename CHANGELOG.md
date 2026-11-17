@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.7.1]
+
+- Lasm tests run under `@lasm/cli` 0.8.0.
+
 ## [0.7.0]
 
 - Adds `Affine.rebase_apply_float32_error`, the binary32 counterpart of `Affine.rebase_apply_float_error`.
