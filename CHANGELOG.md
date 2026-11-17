@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.8.0]
+
+- Adds `Affine.rebaseErrorBound`, the bound stated by `Affine.rebase_apply_float_error` and `Affine.rebase_apply_float32_error`, evaluable at a view.
+
 ## [0.7.1]
 
 - Lasm tests run under `@lasm/cli` 0.8.0.

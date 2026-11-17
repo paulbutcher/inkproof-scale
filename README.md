@@ -2,19 +2,32 @@
 
 Linear scales and affine transforms between data space and screen space, with order-preservation, invertibility and composition proved. Part of the Inkproof charting libraries; it knows about ordered fields and intervals, never about what the data measures.
 
+## What it does
+
+- Map a data value to a screen position and back with a linear scale: `Linear.map`, `Linear.inv`, `Linear.toAffine`.
+- Turn a scale into a plain slope and offset, apply, compose and invert it: `Affine.apply`, `Affine.comp`, `Affine.inv`.
+- Put bands for categories (bar charts, heatmaps) on an axis, and look a category up by key or a position back to its category: `Categorical.bandStart`, `Categorical.bandwidth`, `Categorical.map?`, `Categorical.unmap?`, `Categorical.index?`, `Categorical.toAffine`.
+- Scale on a log axis: `Log.map`, `Log.unmap`, `Log.toLinear`.
+- Scale time: convert durations and units, and build a scale from a time span: `Duration.ofUnits`, `Duration.toUnits`, `Duration.unitAffine`, `Linear.ofDurations`.
+- Keep float precision when zoomed far into large coordinates by rebasing a scale to a nearby origin: `Affine.rebase`, `Linear.rebase`.
+- Bound the Float rounding error of a map, rebased or not, for binary64 and binary32: `Linear.map_float_error`, `Linear.rebase_map_float_error`, `Affine.rebase_apply_float_error`, `Affine.rebase_apply_float32_error`, evaluated with `Affine.rebaseErrorBound` and `Linear.NormalSteps`.
+- Require a scale's domain to satisfy a condition, such as nonzero width or positive values, and make a change of domain fail rather than break it: `Constrained`, `Linear.check?`, `Constrained.withDomain?`.
+- Widen a domain so that it includes a value: `Includes`, `Includes.widen`.
+- Share one scale between linked charts so a zoom or pan reaches all of them: `Shared`, `Shared.read`, `Shared.update`.
+
 ## Supported versions
 
 | Inkproof.Scale | Lean | Lasm (`@lasm/cli`) | Inkproof.Float |
 | --- | --- | --- | --- |
-| `main` | `leanprover/lean4:v4.35.0` | 0.3.5 | `v0.1.0` |
-| `v0.1.0` | `leanprover/lean4:v4.35.0` | 0.3.5 | `v0.1.0` |
+| `main` | `leanprover/lean4:v4.35.0` | 0.8.0 | `v0.4.0` |
+| `v0.7.1` | `leanprover/lean4:v4.35.0` | 0.8.0 | `v0.4.0` |
 
 The library builds natively and under Lasm from the same source.
 
 ## Using it
 
 ```lean
-require «inkproof-scale» from git "https://github.com/tentenths/inkproof-scale" @ "v0.1.0"
+require «inkproof-scale» from git "https://github.com/tentenths/inkproof-scale" @ "v0.7.1"
 ```
 
 `import Inkproof.Scale` brings in everything a program runs. `import Inkproof.Scale.Proofs` adds the published theorems, which a browser build need not link. Each definition's docstring names the theorems about it, and each theorem's docstring states it in plain English.

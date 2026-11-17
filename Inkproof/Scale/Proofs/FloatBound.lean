@@ -177,6 +177,16 @@ private theorem sens (X W P Q R S xo po qo k : Rat)
   rw [e] at lhs
   grind
 
+/-- The bound `(|slope * (x - origin)| + |slope * origin| + |offset|) / 2 ^ e` that
+`Affine.rebase_apply_float_error` (`e = 50`) and `Affine.rebase_apply_float32_error` (`e = 21`) state,
+for the exact slope `a`, offset `d`, origin `w` and point `b`. -/
+def Affine.rebaseErrorBound (e : Int) (a w b d : Rat) : Rat :=
+  ((a * (b - w)).abs + (a * w).abs + d.abs) / scaleTwoPow 1 e
+
+theorem Affine.rebaseErrorBound_eq (e : Int) (a w b d : Rat) :
+    Affine.rebaseErrorBound e a w b d =
+      ((a * (b - w)).abs + (a * w).abs + d.abs) / scaleTwoPow 1 e := rfl
+
 /-- The Float rebased map, rebasing in floats and then applying to `x - origin`, is
 within `(|slope * (x - origin)| + |slope * origin| + |offset|) / 2 ^ 50` of the exact value of the
 unrebased map at `x`, given that no intermediate result overflows or falls into the subnormal
@@ -193,7 +203,8 @@ theorem Affine.rebase_apply_float_error (t : Affine Float) (o x : Float) {a w b 
       Float.toRat (t.slope * o + t.offset) = some c' → NormalRange (pm + c')) :
     ∃ q, Float.toRat ((t.rebase o).apply (x - o)) = some q ∧
       (q - (a * b + d)).abs ≤
-        ((a * (b - w)).abs + (a * w).abs + d.abs) / scaleTwoPow 1 50 := by
+        Affine.rebaseErrorBound 50 a w b d := by
+  unfold Affine.rebaseErrorBound
   obtain ⟨po, hpo, e_po⟩ := FloatFormat.Approx.abs_le (Float.approximates_mul hs ho n1)
   obtain ⟨c', hc', e_c⟩ := FloatFormat.Approx.abs_le (Float.approximates_add hpo hc (n2 po hpo))
   obtain ⟨xo, hxo, e_xo⟩ := FloatFormat.Approx.abs_le (Float.approximates_sub hx ho n3)
@@ -220,7 +231,8 @@ theorem Affine.rebase_apply_float32_error (t : Affine Float32) (o x : Float32) {
         FloatFormat.binary32.NormalRange (pm + c')) :
     ∃ q, Float32.toRat ((t.rebase o).apply (x - o)) = some q ∧
       (q - (a * b + d)).abs ≤
-        ((a * (b - w)).abs + (a * w).abs + d.abs) / scaleTwoPow 1 21 := by
+        Affine.rebaseErrorBound 21 a w b d := by
+  unfold Affine.rebaseErrorBound
   obtain ⟨po, hpo, e_po⟩ := FloatFormat.Approx.abs_le (Float32.approximates_mul hs ho n1)
   obtain ⟨c', hc', e_c⟩ := FloatFormat.Approx.abs_le (Float32.approximates_add hpo hc (n2 po hpo))
   obtain ⟨xo, hxo, e_xo⟩ := FloatFormat.Approx.abs_le (Float32.approximates_sub hx ho n3)
