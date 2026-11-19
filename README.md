@@ -13,6 +13,7 @@ Linear scales and affine transforms between data space and screen space, with or
 - Bound the Float rounding error of a map, rebased or not, for binary64 and binary32: `Linear.map_float_error`, `Linear.rebase_map_float_error`, `Affine.rebase_apply_float_error`, `Affine.rebase_apply_float32_error`, evaluated with `Affine.rebaseErrorBound` and `Linear.NormalSteps`.
 - Require a scale's domain to satisfy a condition, such as nonzero width or positive values, and make a change of domain fail rather than break it: `Constrained`, `Linear.check?`, `Constrained.withDomain?`.
 - Widen a domain so that it includes a value: `Includes`, `Includes.widen`.
+- Choose the range a chart shows from its data extent, padded, kept at zero where the data does not cross it, and limited by soft and hard bounds: `autoRange`, `padExtent`, `RangeLimits`.
 - Share one scale between linked charts so a zoom or pan reaches all of them: `Shared`, `Shared.read`, `Shared.update`.
 
 ## Supported versions

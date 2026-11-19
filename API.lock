@@ -146,6 +146,21 @@ theorem Inkproof.Scale.Log.toLinear_eq : ∀ {α : Type u} (log : α → α) (s 
 def Inkproof.Scale.Log.unmap : {α : Type u} → [Add α] → [Sub α] → [Mul α] → [Div α] → (α → α) → (α → α) → Inkproof.Scale.Log α → α → α
 theorem Inkproof.Scale.Log.unmap_eq : ∀ {α : Type u} [inst : Add α] [inst_1 : Sub α] [inst_2 : Mul α] [inst_3 : Div α] (log exp : α → α) (s : Inkproof.Scale.Log α) (y : α), Inkproof.Scale.Log.unmap log exp s y = exp ((Inkproof.Scale.Log.toLinear log s).inv.map y)
 theorem Inkproof.Scale.Log.unmap_map : ∀ {α : Type u} [inst : Lean.Grind.Field α] (log exp : α → α) (s : Inkproof.Scale.Log α), log s.domainStart ≠ log s.domainEnd → s.rangeStart ≠ s.rangeEnd → ∀ {x : α}, exp (log x) = x → Inkproof.Scale.Log.unmap log exp s (Inkproof.Scale.Log.map log s x) = x
+structure Inkproof.Scale.RangeLimits : Type u → Type u
+def Inkproof.Scale.RangeLimits.apply : {α : Type u} → [inst : LT α] → [DecidableLT α] → Inkproof.Scale.RangeLimits α → α × α → α × α
+theorem Inkproof.Scale.RangeLimits.apply_default : ∀ {α : Type u} [inst : LT α] [inst_1 : DecidableLT α] (r : α × α), { }.apply r = r
+theorem Inkproof.Scale.RangeLimits.apply_fst_hard : ∀ {α : Type u} [inst : LT α] [inst_1 : DecidableLT α] {l : Inkproof.Scale.RangeLimits α} {r : α × α} {h : α}, l.softLo = Option.none → l.hardLo = Option.some h → (l.apply r).fst = if r.fst < h then h else r.fst
+theorem Inkproof.Scale.RangeLimits.apply_fst_soft : ∀ {α : Type u} [inst : LT α] [inst_1 : DecidableLT α] {l : Inkproof.Scale.RangeLimits α} {r : α × α} {s : α}, l.softLo = Option.some s → l.hardLo = Option.none → (l.apply r).fst = if s < r.fst then s else r.fst
+theorem Inkproof.Scale.RangeLimits.apply_le : ∀ {α : Type u} [inst : LT α] [inst_1 : DecidableLT α] [inst_2 : LE α] [Std.IsLinearOrder α] [Std.LawfulOrderLT α] {l : Inkproof.Scale.RangeLimits α} {r : α × α} {x : α}, r.fst ≤ x → (∀ (h : α), l.hardLo = Option.some h → h ≤ x) → (l.apply r).fst ≤ x
+theorem Inkproof.Scale.RangeLimits.apply_lt : ∀ {α : Type u} [inst : LT α] [inst_1 : DecidableLT α] [inst_2 : LE α] [Std.IsLinearOrder α] [Std.LawfulOrderLT α] {l : Inkproof.Scale.RangeLimits α} {r : α × α}, l.hardLo = Option.none → l.hardHi = Option.none → r.fst < r.snd → (l.apply r).fst < (l.apply r).snd
+theorem Inkproof.Scale.RangeLimits.apply_snd_hard : ∀ {α : Type u} [inst : LT α] [inst_1 : DecidableLT α] {l : Inkproof.Scale.RangeLimits α} {r : α × α} {h : α}, l.softHi = Option.none → l.hardHi = Option.some h → (l.apply r).snd = if h < r.snd then h else r.snd
+theorem Inkproof.Scale.RangeLimits.apply_snd_soft : ∀ {α : Type u} [inst : LT α] [inst_1 : DecidableLT α] {l : Inkproof.Scale.RangeLimits α} {r : α × α} {s : α}, l.softHi = Option.some s → l.hardHi = Option.none → (l.apply r).snd = if r.snd < s then s else r.snd
+field Inkproof.Scale.RangeLimits.hardHi : {α : Type u} → Inkproof.Scale.RangeLimits α → Option α
+field Inkproof.Scale.RangeLimits.hardLo : {α : Type u} → Inkproof.Scale.RangeLimits α → Option α
+theorem Inkproof.Scale.RangeLimits.le_apply : ∀ {α : Type u} [inst : LT α] [inst_1 : DecidableLT α] [inst_2 : LE α] [Std.IsLinearOrder α] [Std.LawfulOrderLT α] {l : Inkproof.Scale.RangeLimits α} {r : α × α} {x : α}, x ≤ r.snd → (∀ (h : α), l.hardHi = Option.some h → x ≤ h) → x ≤ (l.apply r).snd
+constructor Inkproof.Scale.RangeLimits.mk : {α : Type u} → Option α → Option α → Option α → Option α → Inkproof.Scale.RangeLimits α
+field Inkproof.Scale.RangeLimits.softHi : {α : Type u} → Inkproof.Scale.RangeLimits α → Option α
+field Inkproof.Scale.RangeLimits.softLo : {α : Type u} → Inkproof.Scale.RangeLimits α → Option α
 structure Inkproof.Scale.Shared : Type u → Type u
 theorem Inkproof.Scale.Shared.map_eq_of_eq : ∀ {α : Type u} [inst : Add α] [inst_1 : Sub α] [inst_2 : Mul α] [inst_3 : Div α] {h₁ h₂ : Inkproof.Scale.Shared (Inkproof.Scale.Linear α)}, h₁ = h₂ → ∀ (x : α), (h₁.read fun x_1 => x_1.map x) = h₂.read fun x_1 => x_1.map x
 constructor Inkproof.Scale.Shared.mk : {σ : Type u} → σ → Inkproof.Scale.Shared σ
@@ -155,6 +170,10 @@ theorem Inkproof.Scale.Shared.read_eq : ∀ {σ : Type u} {β : Type v} (h : Ink
 theorem Inkproof.Scale.Shared.read_update : ∀ {σ : Type u} {β : Type v} (h : Inkproof.Scale.Shared σ) (f : σ → σ) (g : σ → β), (h.update f).read g = g (f h.scale)
 field Inkproof.Scale.Shared.scale : {σ : Type u} → Inkproof.Scale.Shared σ → σ
 def Inkproof.Scale.Shared.update : {σ : Type u} → Inkproof.Scale.Shared σ → (σ → σ) → Inkproof.Scale.Shared σ
+def Inkproof.Scale.autoRange : {α : Type u} → [Add α] → [Sub α] → [Mul α] → [OfNat α 0] → [OfNat α 1] → [inst : LT α] → [DecidableLT α] → α → α → α → optParam (Inkproof.Scale.RangeLimits α) { } → α × α
+theorem Inkproof.Scale.autoRange_contains : ∀ {α : Type u} [inst : LT α] [inst_1 : DecidableLT α] [inst_2 : Lean.Grind.Field α] [inst_3 : LE α] [inst_4 : Std.IsLinearOrder α] [Std.LawfulOrderLT α] [Lean.Grind.OrderedRing α] {pad lo hi : α} {l : Inkproof.Scale.RangeLimits α}, 0 ≤ pad → lo ≤ hi → (∀ (x : α), l.hardLo = Option.some x → x ≤ lo) → (∀ (x : α), l.hardHi = Option.some x → hi ≤ x) → (Inkproof.Scale.autoRange pad lo hi l).fst ≤ lo ∧ hi ≤ (Inkproof.Scale.autoRange pad lo hi l).snd
+theorem Inkproof.Scale.autoRange_default : ∀ {α : Type u} [inst : LT α] [inst_1 : DecidableLT α] [inst_2 : Add α] [inst_3 : Sub α] [inst_4 : Mul α] [inst_5 : OfNat α 0] [inst_6 : OfNat α 1] {pad lo hi : α}, Inkproof.Scale.autoRange pad lo hi = Inkproof.Scale.padExtent pad lo hi
+theorem Inkproof.Scale.autoRange_nonempty : ∀ {α : Type u} [inst : LT α] [inst_1 : DecidableLT α] [inst_2 : Lean.Grind.Field α] [inst_3 : LE α] [inst_4 : Std.IsLinearOrder α] [Std.LawfulOrderLT α] [Lean.Grind.OrderedRing α] {pad lo hi : α} {l : Inkproof.Scale.RangeLimits α}, 0 ≤ pad → lo ≤ hi → l.hardLo = Option.none → l.hardHi = Option.none → (Inkproof.Scale.autoRange pad lo hi l).fst < (Inkproof.Scale.autoRange pad lo hi l).snd
 instance Inkproof.Scale.instDecidableIncludesOfDecidableLE : {α : Type u} → [inst : LE α] → [DecidableLE α] → (v a b : α) → Decidable (Inkproof.Scale.Includes v a b)
 instance Inkproof.Scale.instReprAffine : {α : Type u_1} → [Repr α] → Repr (Inkproof.Scale.Affine α)
 def Inkproof.Scale.instReprAffine.repr : {α : Type u_1} → [Repr α] → Inkproof.Scale.Affine α → Nat → Std.Format
@@ -166,3 +185,11 @@ instance Inkproof.Scale.instReprLinear : {α : Type u_1} → [Repr α] → Repr 
 def Inkproof.Scale.instReprLinear.repr : {α : Type u_1} → [Repr α] → Inkproof.Scale.Linear α → Nat → Std.Format
 instance Inkproof.Scale.instReprLog : {α : Type u_1} → [Repr α] → Repr (Inkproof.Scale.Log α)
 def Inkproof.Scale.instReprLog.repr : {α : Type u_1} → [Repr α] → Inkproof.Scale.Log α → Nat → Std.Format
+instance Inkproof.Scale.instReprRangeLimits : {α : Type u_1} → [Repr α] → Repr (Inkproof.Scale.RangeLimits α)
+def Inkproof.Scale.instReprRangeLimits.repr : {α : Type u_1} → [Repr α] → Inkproof.Scale.RangeLimits α → Nat → Std.Format
+def Inkproof.Scale.padExtent : {α : Type u} → [Add α] → [Sub α] → [Mul α] → [OfNat α 0] → [OfNat α 1] → [inst : LT α] → [DecidableLT α] → α → α → α → α × α
+theorem Inkproof.Scale.padExtent_contains : ∀ {α : Type u} [inst : LT α] [inst_1 : DecidableLT α] [inst_2 : Lean.Grind.Field α] [inst_3 : LE α] [inst_4 : Std.IsLinearOrder α] [Std.LawfulOrderLT α] [Lean.Grind.OrderedRing α] {pad lo hi : α}, 0 ≤ pad → lo ≤ hi → (Inkproof.Scale.padExtent pad lo hi).fst ≤ lo ∧ hi ≤ (Inkproof.Scale.padExtent pad lo hi).snd
+theorem Inkproof.Scale.padExtent_lt : ∀ {α : Type u} [inst : LT α] [inst_1 : DecidableLT α] [inst_2 : Lean.Grind.Field α] [inst_3 : LE α] [inst_4 : Std.IsLinearOrder α] [Std.LawfulOrderLT α] [Lean.Grind.OrderedRing α] {pad lo hi : α}, 0 ≤ pad → lo ≤ hi → (Inkproof.Scale.padExtent pad lo hi).fst < (Inkproof.Scale.padExtent pad lo hi).snd
+theorem Inkproof.Scale.padExtent_nonneg : ∀ {α : Type u} [inst : LT α] [inst_1 : DecidableLT α] [inst_2 : Lean.Grind.Field α] [inst_3 : LE α] [inst_4 : Std.IsLinearOrder α] [Std.LawfulOrderLT α] [Lean.Grind.OrderedRing α] {pad lo hi : α}, 0 ≤ lo → 0 ≤ (Inkproof.Scale.padExtent pad lo hi).fst
+theorem Inkproof.Scale.padExtent_of_neg : ∀ {α : Type u} [inst : LT α] [inst_1 : DecidableLT α] [inst_2 : Add α] [inst_3 : Sub α] [inst_4 : Mul α] [inst_5 : OfNat α 0] [inst_6 : OfNat α 1] {pad lo hi d : α}, (d = if lo < hi then (hi - lo) * pad else 1) → lo < 0 → Inkproof.Scale.padExtent pad lo hi = (lo - d, if 0 < hi then hi + d else if 0 < hi + d then 0 else hi + d)
+theorem Inkproof.Scale.padExtent_of_nonneg : ∀ {α : Type u} [inst : LT α] [inst_1 : DecidableLT α] [inst_2 : Add α] [inst_3 : Sub α] [inst_4 : Mul α] [inst_5 : OfNat α 0] [inst_6 : OfNat α 1] {pad lo hi d : α}, (d = if lo < hi then (hi - lo) * pad else 1) → ¬lo < 0 → Inkproof.Scale.padExtent pad lo hi = (if lo - d < 0 then 0 else lo - d, hi + d)
