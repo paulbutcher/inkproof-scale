@@ -54,6 +54,12 @@ theorem toAffine_comp_apply (t : Affine α) (i : Nat) :
     t.apply (s.bandStart i) = (t.comp s.toAffine).apply (i : α) := by
   rw [Affine.comp_apply, toAffine_apply]
 
+omit [Field α] in
+/-- The centre of a band is its start plus half its length. -/
+theorem bandCentre_eq [NatCast α] [Add α] [Sub α] [Mul α] [Div α] [OfNat α 2]
+    (s : Categorical κ α) (i : Nat) : s.bandCentre i = s.bandStart i + s.bandwidth / 2 :=
+  rfl
+
 /-- The first band starts at the start of the range. -/
 theorem bandStart_zero : s.bandStart 0 = s.rangeStart := by
   simp only [bandStart]; grind
@@ -168,6 +174,46 @@ theorem unmap?_map? [BEq κ] [LawfulBEq κ] [BEq α] [LawfulBEq α] (hr : s.rang
     grind
   simp only [unmap?, this, Option.bind_some, Array.getElem?_eq_getElem hlt]
   simpa using hk
+
+/-- Where the range runs upwards, a band's centre lies strictly between its start and the next
+band's start. -/
+theorem bandCentre_between_of_increasing (h : s.categories.size ≠ 0)
+    (hr : s.rangeStart < s.rangeEnd) (i : Nat) :
+    s.bandStart i < s.bandCentre i ∧ s.bandCentre i < s.bandStart (i + 1) := by
+  have hw := bandwidth_pos s h hr
+  have h2 : s.bandStart (i + 1) = s.bandStart i + s.bandwidth := by
+    simp only [bandStart]; rw [Semiring.natCast_succ]; grind
+  have h3 : (2 : α) * (s.bandwidth / 2) = s.bandwidth := by
+    rw [Field.div_eq_mul_inv]
+    have := Field.mul_inv_cancel (show (2 : α) ≠ 0 by grind)
+    grind
+  have h4 : 0 < s.bandwidth / 2 := by
+    rw [Field.div_eq_mul_inv]
+    exact OrderedRing.mul_pos hw (inv_pos_of_pos (by grind))
+  simp only [bandCentre]
+  grind
+
+/-- Where the range runs downwards, a band's centre lies strictly between the next band's start and
+its start. -/
+theorem bandCentre_between_of_decreasing (h : s.categories.size ≠ 0)
+    (hr : s.rangeEnd < s.rangeStart) (i : Nat) :
+    s.bandStart (i + 1) < s.bandCentre i ∧ s.bandCentre i < s.bandStart i := by
+  have hw := bandwidth_neg s h hr
+  have h2 : s.bandStart (i + 1) = s.bandStart i + s.bandwidth := by
+    simp only [bandStart]; rw [Semiring.natCast_succ]; grind
+  have h3 : (2 : α) * (s.bandwidth / 2) = s.bandwidth := by
+    rw [Field.div_eq_mul_inv]
+    have := Field.mul_inv_cancel (show (2 : α) ≠ 0 by grind)
+    grind
+  have h4 : s.bandwidth / 2 < 0 := by
+    have : 0 < (-s.bandwidth) / 2 := by
+      rw [Field.div_eq_mul_inv]
+      exact OrderedRing.mul_pos (by grind) (inv_pos_of_pos (by grind))
+    have h5 : (-s.bandwidth) / 2 = -(s.bandwidth / 2) := by
+      rw [Field.div_eq_mul_inv, Field.div_eq_mul_inv]; grind
+    grind
+  simp only [bandCentre]
+  grind
 
 end OrderedField
 

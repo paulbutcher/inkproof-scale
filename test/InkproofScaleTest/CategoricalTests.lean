@@ -31,7 +31,9 @@ def floatBands : TestCase := .mk "Float categorical scale orders bands and inver
       | none => check false s!"{k} unmapped"
       | some y =>
         check (s.unmap? y == some k) s!"{k} did not invert"
+        check (y < s.bandCentre i) s!"{k} centre not after its start"
         if i + 1 < n then
+          check (s.bandCentre i < s.bandStart (i + 1)) s!"{k} centre not before the next band"
           check (y < s.bandStart (i + 1)) s!"{k} band not before the next"
 
 def tests : List TestCase := [floatBands]

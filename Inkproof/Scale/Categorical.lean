@@ -28,6 +28,11 @@ def bandwidth [NatCast α] [Sub α] [Div α] (s : Categorical κ α) : α :=
 def bandStart [NatCast α] [Add α] [Sub α] [Mul α] [Div α] (s : Categorical κ α) (i : Nat) : α :=
   s.rangeStart + (i : α) * s.bandwidth
 
+/-- The middle of the `i`th band, where a tick for the category sits; see `bandCentre_eq`. -/
+def bandCentre [NatCast α] [Add α] [Sub α] [Mul α] [Div α] [OfNat α 2] (s : Categorical κ α)
+    (i : Nat) : α :=
+  s.bandStart i + s.bandwidth / 2
+
 /-- The band starts as an affine map of the band's index, for composing with a transform; see
 `toAffine_apply`. -/
 def toAffine [NatCast α] [Sub α] [Div α] (s : Categorical κ α) : Affine α :=

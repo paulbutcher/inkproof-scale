@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.9.0]
+
+- Adds `Categorical.bandCentre`, the middle of a category's band.
+
 ## [0.8.0]
 
 - Adds `Affine.rebaseErrorBound`, the bound stated by `Affine.rebase_apply_float_error` and `Affine.rebase_apply_float32_error`, evaluable at a view.
