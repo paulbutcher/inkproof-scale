@@ -1,8 +1,11 @@
 # Changelog
 
-## [0.9.0]
+## [0.10.0]
 
 - Adds `autoRange`, the range a chart shows for a data extent, with `padExtent` and `RangeLimits`.
+
+## [0.9.0]
+
 - Adds `Categorical.bandCentre`, the middle of a category's band.
 
 ## [0.8.0]
