@@ -44,6 +44,11 @@ Inkproof.Scale maps values between data space and screen space with scales and a
 - `Duration α` is a length of time in seconds (SCALE-1). `Linear.ofDurations` builds an ordinary linear scale over seconds, so every Linear theorem, including monotonicity and inversion, applies unchanged and nothing is restricted.
 - A unit is a scale factor in seconds. `Duration.ofUnits` and `toUnits` convert, inverse to each other for a nonzero unit, and `unitAffine` is the same conversion as an `Affine` for composing with a scale (PROOF-5).
 
+## Transformed and arcsinh scales
+
+- `Transformed α` is a linear scale over a caller-supplied forward function, with its inverse a parameter of `unmap`; theorems state order preservation on the points where the function is monotone, a predicate parameter, so a domain restriction like `Log`'s positivity is expressible.
+- `Asinh α` adds a linear threshold and is `Transformed` for `x ↦ asinh (x / threshold)`; `asinh` and `sinh` are parameters, so `Float.asinh` and `Float.sinh` run it.
+
 ## Log scales
 
 - `Log α` is a linear scale over logarithms (SCALE-1). The logarithm and its inverse are parameters of `map` and `unmap`, so `Float.log` and `Float.exp` run it and the theorems need only what a real logarithm provides.

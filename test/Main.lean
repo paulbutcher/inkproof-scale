@@ -7,6 +7,7 @@ import InkproofTools.Test.Platform
 import InkproofScaleTest.LinearTests
 import InkproofScaleTest.ElapsedTests
 import InkproofScaleTest.LogTests
+import InkproofScaleTest.TransformedTests
 import InkproofScaleTest.CategoricalTests
 import InkproofScaleTest.SharedTests
 import InkproofScaleTest.ConstrainedTests
@@ -15,4 +16,4 @@ import InkproofScaleTest.AutoRangeTests
 open InkproofScaleTest InkproofTools.Test
 
 def main (args : List String) : IO UInt32 :=
-  runTests (platformTest (args.contains "--expect-wasm") :: LinearTests.tests ++ ElapsedTests.tests ++ LogTests.tests ++ CategoricalTests.tests ++ SharedTests.tests ++ ConstrainedTests.tests ++ AutoRangeTests.tests)
+  runTests (platformTest (args.contains "--expect-wasm") :: LinearTests.tests ++ ElapsedTests.tests ++ LogTests.tests ++ TransformedTests.tests ++ CategoricalTests.tests ++ SharedTests.tests ++ ConstrainedTests.tests ++ AutoRangeTests.tests)

@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.11.0]
+
+- Adds `Transformed`, a scale linear in a caller-supplied transform, and `Asinh`, an arcsinh scale, with inversion and monotonicity proved.
+
 ## [0.10.0]
 
 - Adds `autoRange`, the range a chart shows for a data extent, with `padExtent` and `RangeLimits`.

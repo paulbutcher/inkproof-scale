@@ -8,6 +8,7 @@ Linear scales and affine transforms between data space and screen space, with or
 - Turn a scale into a plain slope and offset, apply, compose and invert it: `Affine.apply`, `Affine.comp`, `Affine.inv`.
 - Put bands for categories (bar charts, heatmaps) on an axis, and look a category up by key or a position back to its category: `Categorical.bandStart`, `Categorical.bandwidth`, `Categorical.bandCentre`, `Categorical.map?`, `Categorical.unmap?`, `Categorical.index?`, `Categorical.toAffine`.
 - Scale on a log axis: `Log.map`, `Log.unmap`, `Log.toLinear`.
+- Scale on an arcsinh axis, for data of either sign and any magnitude, or on any caller-supplied monotone transform with its inverse: `Asinh.map`, `Asinh.unmap`, `Asinh.toLinear`, `Transformed.map`, `Transformed.unmap`, `Transformed.toLinear`.
 - Scale time: convert durations and units, and build a scale from a time span: `Duration.ofUnits`, `Duration.toUnits`, `Duration.unitAffine`, `Linear.ofDurations`.
 - Keep float precision when zoomed far into large coordinates by rebasing a scale to a nearby origin: `Affine.rebase`, `Linear.rebase`.
 - Bound the Float rounding error of a map, rebased or not, for binary64 and binary32: `Linear.map_float_error`, `Linear.rebase_map_float_error`, `Affine.rebase_apply_float_error`, `Affine.rebase_apply_float32_error`, evaluated with `Affine.rebaseErrorBound` and `Linear.NormalSteps`.

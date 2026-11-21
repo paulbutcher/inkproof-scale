@@ -10,4 +10,5 @@ import Inkproof.Scale.Proofs.Elapsed
 import Inkproof.Scale.Proofs.Linear
 import Inkproof.Scale.Proofs.Log
 import Inkproof.Scale.Proofs.Shared
+import Inkproof.Scale.Proofs.Transformed
 import Inkproof.Scale.Proofs.FloatBound
