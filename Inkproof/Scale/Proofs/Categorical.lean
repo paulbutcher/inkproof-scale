@@ -93,25 +93,13 @@ theorem bandStart_size (h : s.categories.size ≠ 0) : s.bandStart s.categories.
   have := Field.mul_inv_cancel this
   grind
 
-theorem inv_pos_of_pos {a : α} (h : 0 < a) : 0 < a⁻¹ := by
-  have h1 : a ≠ 0 := by grind
-  have h2 := Field.mul_inv_cancel h1
-  have h3 := OrderedRing.zero_lt_one (R := α)
-  by_cases h4 : 0 < a⁻¹
-  · exact h4
-  · have h5 : a⁻¹ ≤ 0 := by grind
-    rcases Std.le_iff_lt_or_eq.mp h5 with h6 | h6
-    · have := OrderedRing.mul_pos h (show 0 < -a⁻¹ by grind)
-      grind
-    · grind
-
 theorem bandwidth_pos (h : s.categories.size ≠ 0) (hr : s.rangeStart < s.rangeEnd) :
     0 < s.bandwidth := by
   have hn : (0 : α) < (s.categories.size : α) := by
     have := natCast_lt_natCast_iff (α := α) (i := 0) (j := s.categories.size)
     grind
   simp only [bandwidth, Field.div_eq_mul_inv]
-  exact OrderedRing.mul_pos (by grind) (inv_pos_of_pos hn)
+  exact OrderedRing.mul_pos (by grind) (Field.IsOrdered.inv_pos_iff.mpr hn)
 
 theorem bandwidth_neg (h : s.categories.size ≠ 0) (hr : s.rangeEnd < s.rangeStart) :
     s.bandwidth < 0 := by
@@ -119,7 +107,7 @@ theorem bandwidth_neg (h : s.categories.size ≠ 0) (hr : s.rangeEnd < s.rangeSt
     have := natCast_lt_natCast_iff (α := α) (i := 0) (j := s.categories.size)
     grind
   simp only [bandwidth, Field.div_eq_mul_inv]
-  have := OrderedRing.mul_pos (show 0 < s.rangeStart - s.rangeEnd by grind) (inv_pos_of_pos hn)
+  have := OrderedRing.mul_pos (show 0 < s.rangeStart - s.rangeEnd by grind) (Field.IsOrdered.inv_pos_iff.mpr hn)
   grind
 
 /-- PROOF-5: where the range runs upwards, a later category starts later. -/
@@ -189,7 +177,7 @@ theorem bandCentre_between_of_increasing (h : s.categories.size ≠ 0)
     grind
   have h4 : 0 < s.bandwidth / 2 := by
     rw [Field.div_eq_mul_inv]
-    exact OrderedRing.mul_pos hw (inv_pos_of_pos (by grind))
+    exact OrderedRing.mul_pos hw (Field.IsOrdered.inv_pos_iff.mpr (by grind))
   simp only [bandCentre]
   grind
 
@@ -208,7 +196,7 @@ theorem bandCentre_between_of_decreasing (h : s.categories.size ≠ 0)
   have h4 : s.bandwidth / 2 < 0 := by
     have : 0 < (-s.bandwidth) / 2 := by
       rw [Field.div_eq_mul_inv]
-      exact OrderedRing.mul_pos (by grind) (inv_pos_of_pos (by grind))
+      exact OrderedRing.mul_pos (by grind) (Field.IsOrdered.inv_pos_iff.mpr (by grind))
     have h5 : (-s.bandwidth) / 2 = -(s.bandwidth / 2) := by
       rw [Field.div_eq_mul_inv, Field.div_eq_mul_inv]; grind
     grind

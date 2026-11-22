@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.12.0]
+
+- Removes `Categorical.inv_pos_of_pos`; use core's `Lean.Grind.Field.IsOrdered.inv_pos_iff`.
+
 ## [0.11.0]
 
 - Adds `Transformed`, a scale linear in a caller-supplied transform, and `Asinh`, an arcsinh scale, with inversion and monotonicity proved.

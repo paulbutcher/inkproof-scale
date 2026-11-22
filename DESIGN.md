@@ -37,6 +37,7 @@ Inkproof.Scale maps values between data space and screen space with scales and a
 ## Constrained domains
 
 - `Constrained α P` is a linear scale with a proof that `P domainStart domainEnd` holds, for a consumer's constraint `P` (SCALE-6). `Linear.check?` and `withDomain?` build one by testing `P`, so a zoom that breaks it is refused, never applied; the proof is erased at run time.
+- `Includes.widen` and `RangeLimits.apply` compare with `<` and `≤` rather than `min` and `max`: they need only `LT` or `LE` with a decidable order, where `min` and `max` would add `Min` and `Max` instances and laws to every consumer's signature, and the theorems about them are stated on the comparisons.
 - `Includes v` is the constraint "the domain contains `v`", in either direction. `Includes.widen` moves a domain outward until it does, and leaves one that already does alone.
 
 ## Elapsed durations
@@ -59,6 +60,7 @@ Inkproof.Scale maps values between data space and screen space with scales and a
 - `Categorical κ α` divides a range into one equal band per category, in the order of the array (SCALE-1). `bandStart i` is `rangeStart + i * bandwidth`, equal to the `Affine` `toAffine` applied to the index, so composing with a transform is `Affine.comp`.
 - `map?` and `unmap?` are partial: a value that is not a category has no band, and a position that starts no band has no category. A repeated category maps through its first occurrence.
 - Where the range is nondegenerate, band starts are ordered with the index (upwards or downwards) and distinct, and `unmap?` undoes `map?` (PROOF-5). Counting needs an ordered field of characteristic zero, which the ordered-field classes give.
+- Counting uses core's `Lean.Grind.OrderedRing` and `Field.IsOrdered.inv_pos_iff` directly. The private `natCast_lt_natCast_iff`, `natCast_le_natCast_iff` and `natCast_inj` only join core's one-directional lemmas into iff forms to rewrite with; core has no iff forms.
 
 ## Floats
 

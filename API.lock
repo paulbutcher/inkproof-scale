@@ -76,7 +76,6 @@ theorem Inkproof.Scale.Categorical.bandwidth_pos : ∀ {κ : Type u} {α : Type 
 field Inkproof.Scale.Categorical.categories : {κ : Type u} → {α : Type v} → Inkproof.Scale.Categorical κ α → Array κ
 def Inkproof.Scale.Categorical.index? : {κ : Type u} → {α : Type v} → [BEq κ] → Inkproof.Scale.Categorical κ α → κ → Option Nat
 theorem Inkproof.Scale.Categorical.index?_eq : ∀ {κ : Type u} {α : Type v} [inst : BEq κ] (s : Inkproof.Scale.Categorical κ α) (k : κ), s.index? k = Array.findIdx? (fun x => x == k) s.categories
-theorem Inkproof.Scale.Categorical.inv_pos_of_pos : ∀ {α : Type v} [inst : Lean.Grind.Field α] [inst_1 : LE α] [inst_2 : LT α] [Std.LawfulOrderLT α] [inst_4 : Std.IsLinearOrder α] [Lean.Grind.OrderedRing α] {a : α}, 0 < a → 0 < a⁻¹
 def Inkproof.Scale.Categorical.map? : {κ : Type u} → {α : Type v} → [BEq κ] → [NatCast α] → [Add α] → [Sub α] → [Mul α] → [Div α] → Inkproof.Scale.Categorical κ α → κ → Option α
 theorem Inkproof.Scale.Categorical.map?_eq : ∀ {κ : Type u} {α : Type v} [inst : BEq κ] [inst_1 : NatCast α] [inst_2 : Add α] [inst_3 : Sub α] [inst_4 : Mul α] [inst_5 : Div α] (s : Inkproof.Scale.Categorical κ α) (k : κ), s.map? k = Option.map s.bandStart (s.index? k)
 constructor Inkproof.Scale.Categorical.mk : {κ : Type u} → {α : Type v} → Array κ → α → α → Inkproof.Scale.Categorical κ α
