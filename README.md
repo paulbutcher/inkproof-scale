@@ -17,20 +17,15 @@ Linear scales and affine transforms between data space and screen space, with or
 - Choose the range a chart shows from its data extent, padded, kept at zero where the data does not cross it, and limited by soft and hard bounds: `autoRange`, `padExtent`, `RangeLimits`.
 - Share one scale between linked charts so a zoom or pan reaches all of them: `Shared`, `Shared.read`, `Shared.update`.
 
-## Supported versions
-
-| Inkproof.Scale | Lean | Lasm (`@lasm/cli`) | Inkproof.Float |
-| --- | --- | --- | --- |
-| `main` | `leanprover/lean4:v4.35.0` | 0.8.0 | `v0.4.0` |
-| `v0.7.1` | `leanprover/lean4:v4.35.0` | 0.8.0 | `v0.4.0` |
-
-The library builds natively and under Lasm from the same source.
+The library builds natively and under Lasm from the same source. The toolchain and dependency pins are in `lakefile.lean` and `lean-toolchain`.
 
 ## Using it
 
 ```lean
-require «inkproof-scale» from git "https://github.com/tentenths/inkproof-scale" @ "v0.7.1"
+require «inkproof-scale» from git "https://github.com/tentenths/inkproof-scale" @ "vX.Y.Z"
 ```
+
+Replace `vX.Y.Z` with the latest release tag, listed in `CHANGELOG.md`.
 
 `import Inkproof.Scale` brings in everything a program runs. `import Inkproof.Scale.Proofs` adds the published theorems, which a browser build need not link. Each definition's docstring names the theorems about it, and each theorem's docstring states it in plain English.
 
