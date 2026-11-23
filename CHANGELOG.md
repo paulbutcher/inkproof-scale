@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.12.1]
+
+- README names no pinned versions; it points to the latest release tag and to `lakefile.lean`.
+
 ## [0.12.0]
 
 - Removes `Categorical.inv_pos_of_pos`; use core's `Lean.Grind.Field.IsOrdered.inv_pos_iff`.
